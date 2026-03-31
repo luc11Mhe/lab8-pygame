@@ -1,5 +1,6 @@
 import pygame
 import random
+import math
 
 pygame.init()
 MIN_SIZE = 10
