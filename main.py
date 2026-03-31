@@ -43,6 +43,11 @@ class Square:
 
          self.dx = new_dx
          self.dy = new_dy
+        speed = math.sqrt(self.dx**2 + self.dy**2)
+        if speed > 0:
+         factor = min(self.max_speed, speed) / speed
+         self.dx *= factor
+         self.dy *= factor
 
         if abs(self.dx) > self.max_speed:
             self.dx = self.max_speed if self.dx > 0 else -self.max_speed
