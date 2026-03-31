@@ -32,8 +32,6 @@ class Square:
         )
 
     def move(self):
-        self.dx += random.choice([-1, 0, 1])
-        self.dy += random.choice([-1, 0, 1])
 
         if abs(self.dx) > self.max_speed:
             self.dx = self.max_speed if self.dx > 0 else -self.max_speed
