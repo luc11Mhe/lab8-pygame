@@ -33,6 +33,15 @@ class Square:
         )
 
     def move(self):
+        angle = random.uniform(-0.2, 0.2)
+        cos_a = math.cos(angle)
+        sin_a = math.sin(angle)
+
+        new_dx = self.dx * cos_a - self.dy * sin_a
+        new_dy = self.dx * sin_a + self.dy * cos_a
+
+        self.dx = new_dx
+        self.dy = new_dy
 
         if abs(self.dx) > self.max_speed:
             self.dx = self.max_speed if self.dx > 0 else -self.max_speed
