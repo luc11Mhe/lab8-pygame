@@ -34,20 +34,20 @@ class Square:
 
     def move(self):
         if random.random() < 0.2:
-         angle = random.uniform(-0.2, 0.2)
-         cos_a = math.cos(angle)
-         sin_a = math.sin(angle)
+            angle = random.uniform(-0.2, 0.2)
+            cos_a = math.cos(angle)
+            sin_a = math.sin(angle)
 
-         new_dx = self.dx * cos_a - self.dy * sin_a
-         new_dy = self.dx * sin_a + self.dy * cos_a
+            new_dx = self.dx * cos_a - self.dy * sin_a
+            new_dy = self.dx * sin_a + self.dy * cos_a
 
-         self.dx = new_dx
-         self.dy = new_dy
+            self.dx = new_dx
+            self.dy = new_dy
         speed = math.sqrt(self.dx**2 + self.dy**2)
         if speed > 0:
-         factor = min(self.max_speed, speed) / speed
-         self.dx *= factor
-         self.dy *= factor
+            factor = min(self.max_speed, speed) / speed
+            self.dx *= factor
+            self.dy *= factor
 
         if abs(self.dx) > self.max_speed:
             self.dx = self.max_speed if self.dx > 0 else -self.max_speed
@@ -62,16 +62,34 @@ class Square:
         if self.y <= 0 or self.y >= HEIGHT - self.size:
             self.dy *= -1
 
+    def flee(self, all_squares):
+        for other in all_squares:
+            if other is self:
+                continue
+            if other.size > self.size:
+                dist = math.hypot(self.x - other.x, self.y - other.y)
+                
+                if dist <= 200:
+                    if self.x < other.x: self.dx -= 0.2
+                    else: self.dx += 0.2
+                        
+                    if self.y < other.y: self.dy -= 0.2
+                    else: self.dy += 0.2
+
     def draw(self, surface):
         pygame.draw.rect(surface, self.color, (self.x, self.y, self.size, self.size))
+
     def draw(self, surface):
         pygame.draw.rect(surface, self.color, (self.x, self.y, self.size, self.size))
 
 
 squares = []
-for i in range(10):
+for i in range(15):
     squares.append(Square())
 
+for square in squares:
+    square.flee(squares)
+    square.move()
 
 running = True
 while running:
