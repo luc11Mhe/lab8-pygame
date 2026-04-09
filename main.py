@@ -43,6 +43,7 @@ class Square:
 
             self.dx = new_dx
             self.dy = new_dy
+
         speed = math.sqrt(self.dx**2 + self.dy**2)
         if speed > 0:
             factor = min(self.max_speed, speed) / speed
@@ -66,12 +67,16 @@ class Square:
         for other in all_squares:
             if other is self:
                 continue
+
             if other.size > self.size:
-                dist = math.hypot(self.x - other.x, self.y - other.y)
-                
+                dx = self.x - other.x
+                dy = self.y - other.y
+                dist = math.hypot(dx, dy)
+
                 if dist < 200 and dist > 0:
                     dx /= dist
                     dy /= dist
+
                     self.dx += dx * 0.5
                     self.dy += dy * 0.5
 
@@ -83,12 +88,9 @@ class Square:
 
 
 squares = []
-for i in range(5):
+for i in range(15):
     squares.append(Square())
 
-for square in squares:
-    square.flee(squares)
-    square.move()
 
 running = True
 while running:
@@ -97,6 +99,9 @@ while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
+
+    for square in squares:
+        square.flee(squares)
 
     for square in squares:
         square.move()

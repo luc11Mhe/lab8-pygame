@@ -238,3 +238,47 @@
 - **Hook Version**: 1.02
 - **Date**: 09-04-2026 20:16
 - **Prompt**: you forgot to add all the prompts from today
+
+### **New Interaction**
+- **Agent Version**: 2.2
+- **Date**: 09-04-2026 20:16
+- **User**: michee-lucas.izambay@epita.fr
+- **Prompt**: How can I calculate a normalized direction vector pointing away from another object in 2D space?
+- **CoPilot Mode**: Agent
+- **CoPilot Model**: GPT-5.3-Codex
+- **Socratic Mode**: ON
+- **Changes Made**: Provided conceptual vector-normalization guidance for flee direction; no code changes.
+- **Context and Reasons for Changes**: User asked for the mathematical method to compute a normalized away-direction vector in 2D.
+
+### **New Interaction**
+- **Agent Version**: 2.2
+- **Date**: 09-04-2026 20:16
+- **User**: michee-lucas.izambay@epita.fr
+- **Prompt**: stop making a promt history file everytime i ask a question. How do I smoothly adjust velocity (dx, dy) instead of instantly changing direction in a Pygame simulation?
+- **CoPilot Mode**: Agent
+- **CoPilot Model**: GPT-5.3-Codex
+- **Socratic Mode**: ON
+- **Changes Made**: Confirmed no prompt-history file updates and explained smooth steering via desired velocity blending; no code changes.
+- **Context and Reasons for Changes**: User requested both workflow behavior adjustment and smoother motion logic in the simulation.
+
+### **New Interaction**
+- **Agent Version**: 2.2
+- **Date**: 09-04-2026 20:16
+- **User**: michee-lucas.izambay@epita.fr
+- **Prompt**: How can I make objects steer away from others smoothly instead of moving in straight lines?
+- **CoPilot Mode**: Agent
+- **CoPilot Model**: GPT-5.3-Codex
+- **Socratic Mode**: ON
+- **Changes Made**: Explained steering-force approach with desired velocity, acceleration limits, and damping; no code changes.
+- **Context and Reasons for Changes**: User asked how to replace abrupt directional changes with smoother avoidance behavior.
+
+### **New Interaction**
+- **Agent Version**: 2.2
+- **Date**: 09-04-2026 20:16
+- **User**: michee-lucas.izambay@epita.fr
+- **Prompt**: you forgot to add all the prompts from today
+- **CoPilot Mode**: Agent
+- **CoPilot Model**: GPT-5.3-Codex
+- **Socratic Mode**: ON
+- **Changes Made**: Backfilled missing full-detail entries for today's prompts in JOURNAL.md.
+- **Context and Reasons for Changes**: User reported missing prompt coverage for today and requested correction.
