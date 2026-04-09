@@ -202,3 +202,8 @@
 - **Hook Version**: 1.02
 - **Date**: 09-04-2026 20:08
 - **Prompt**: How can I calculate a normalized direction vector pointing away from another object in 2D space?
+
+### **New Interaction**
+- **Hook Version**: 1.02
+- **Date**: 09-04-2026 20:10
+- **Prompt**: stop making a promt history file everytime i ask a question. How do I smoothly adjust velocity (dx, dy) instead of instantly changing direction in a Pygame simulation?
