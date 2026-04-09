@@ -69,12 +69,11 @@ class Square:
             if other.size > self.size:
                 dist = math.hypot(self.x - other.x, self.y - other.y)
                 
-                if dist <= 200:
-                    if self.x < other.x: self.dx -= 0.2
-                    else: self.dx += 0.2
-                        
-                    if self.y < other.y: self.dy -= 0.2
-                    else: self.dy += 0.2
+                if dist < 200 and dist > 0:
+                    dx /= dist
+                    dy /= dist
+                    self.dx += dx * 0.5
+                    self.dy += dy * 0.5
 
     def draw(self, surface):
         pygame.draw.rect(surface, self.color, (self.x, self.y, self.size, self.size))
@@ -84,7 +83,7 @@ class Square:
 
 
 squares = []
-for i in range(15):
+for i in range(5):
     squares.append(Square())
 
 for square in squares:
