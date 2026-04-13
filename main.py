@@ -83,12 +83,9 @@ class Square:
     def draw(self, surface):
         pygame.draw.rect(surface, self.color, (self.x, self.y, self.size, self.size))
 
-    def draw(self, surface):
-        pygame.draw.rect(surface, self.color, (self.x, self.y, self.size, self.size))
-
 
 squares = []
-for i in range(15):
+for i in range(50):
     squares.append(Square())
 
 
