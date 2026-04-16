@@ -17,3 +17,6 @@ Automatically captured prompt log. Entries are appended in chronological order (
 ### 16-04-2026 20:17
 - **Prompt**: How do I use pygame.time.Clock() to calculate time between frames?
 
+### 16-04-2026 20:19
+- **Prompt**: How should I modify position updates to include delta time?
+
