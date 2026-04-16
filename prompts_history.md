@@ -20,3 +20,6 @@ Automatically captured prompt log. Entries are appended in chronological order (
 ### 16-04-2026 20:19
 - **Prompt**: How should I modify position updates to include delta time?
 
+### 16-04-2026 20:20
+- **Prompt**: from now on don't give me the answer in code just explain
+

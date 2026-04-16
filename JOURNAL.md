@@ -334,3 +334,8 @@
 - **Hook Version**: 1.02
 - **Date**: 16-04-2026 20:19
 - **Prompt**: How should I modify position updates to include delta time?
+
+### **New Interaction**
+- **Hook Version**: 1.02
+- **Date**: 16-04-2026 20:20
+- **Prompt**: from now on don't give me the answer in code just explain
