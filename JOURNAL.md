@@ -364,3 +364,8 @@
 - **Hook Version**: 1.02
 - **Date**: 16-04-2026 20:30
 - **Prompt**: Where should I update the timer?
+
+### **New Interaction**
+- **Hook Version**: 1.02
+- **Date**: 16-04-2026 20:33
+- **Prompt**: Where should I calculate delta time
