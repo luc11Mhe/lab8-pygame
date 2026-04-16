@@ -339,3 +339,8 @@
 - **Hook Version**: 1.02
 - **Date**: 16-04-2026 20:20
 - **Prompt**: from now on don't give me the answer in code just explain
+
+### **New Interaction**
+- **Hook Version**: 1.02
+- **Date**: 16-04-2026 20:22
+- **Prompt**: What is delta time and how is it used to scale velocity in a game loop?

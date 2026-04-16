@@ -23,3 +23,6 @@ Automatically captured prompt log. Entries are appended in chronological order (
 ### 16-04-2026 20:20
 - **Prompt**: from now on don't give me the answer in code just explain
 
+### 16-04-2026 20:22
+- **Prompt**: What is delta time and how is it used to scale velocity in a game loop?
+
