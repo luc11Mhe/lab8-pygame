@@ -55,8 +55,8 @@ class Square:
         if abs(self.dy) > self.max_speed:
             self.dy = self.max_speed if self.dy > 0 else -self.max_speed
 
-        self.x += self.dx
-        self.y += self.dy
+        self.x += self.dx * dt
+        self.y += self.dy * dt
 
         if self.x < 0:
             self.x = 0
