@@ -5,7 +5,7 @@ import math
 pygame.init()
 MIN_SIZE = 10
 MAX_SIZE = 50
-MAX_SPEED = 5
+MAX_SPEED = 200
 
 WIDTH, HEIGHT = 1080, 920
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
@@ -23,9 +23,9 @@ class Square:
         self.x = random.randint(0, WIDTH - self.size)
         self.y = random.randint(0, HEIGHT - self.size)
 
-        self.dx = random.choice([-1, 1]) * random.randint(1, self.max_speed)
-        self.dy = random.choice([-1, 1]) * random.randint(1, self.max_speed)
-
+        self.dx = random.choice([-1, 1]) * random.uniform(50, self.max_speed)
+        self.dy = random.choice([-1, 1]) * random.uniform(50, self.max_speed)
+        
         self.color = (
             random.randint(50, 255),
             random.randint(50, 255),
