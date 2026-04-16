@@ -14,3 +14,6 @@ Automatically captured prompt log. Entries are appended in chronological order (
 ### 16-04-2026 20:08
 - **Prompt**: How do I handle boundary collision when the has already passed the wall position?
 
+### 16-04-2026 20:17
+- **Prompt**: How do I use pygame.time.Clock() to calculate time between frames?
+
