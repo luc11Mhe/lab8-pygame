@@ -16,6 +16,9 @@ clock = pygame.time.Clock()
 
 class Square:
     def __init__(self):
+        self.reset()
+
+    def reset(self):
         self.size = random.randint(MIN_SIZE, MAX_SIZE)
         speed_fact = (MAX_SIZE - self.size) / (MAX_SIZE - MIN_SIZE + 1)
         self.max_speed = max(1, int(MAX_SPEED * speed_fact))
@@ -32,7 +35,9 @@ class Square:
             random.randint(50, 255),
         )
 
-    def move(self):
+        self.life = random.uniform(5, 15)
+
+    def move(self, dt):
         if random.random() < 0.2:
             angle = random.uniform(-0.2, 0.2)
             cos_a = math.cos(angle)
@@ -49,11 +54,6 @@ class Square:
             factor = min(self.max_speed, speed) / speed
             self.dx *= factor
             self.dy *= factor
-
-        if abs(self.dx) > self.max_speed:
-            self.dx = self.max_speed if self.dx > 0 else -self.max_speed
-        if abs(self.dy) > self.max_speed:
-            self.dy = self.max_speed if self.dy > 0 else -self.max_speed
 
         self.x += self.dx * dt
         self.y += self.dy * dt
@@ -92,9 +92,6 @@ class Square:
     def draw(self, surface):
         pygame.draw.rect(surface, self.color, (self.x, self.y, self.size, self.size))
 
-    def reset(self):
-        self.life = random.uniform(5, 15)
-
     def update_life(self, dt):
         self.life -= dt
         if self.life <= 0:
@@ -108,6 +105,8 @@ for i in range(50):
 
 running = True
 while running:
+    dt = clock.tick(72) / 1000
+
     screen.fill((30, 30, 30))
 
     for event in pygame.event.get():
@@ -119,12 +118,11 @@ while running:
 
     for square in squares:
         square.move(dt)
+        square.update_life(dt)
 
     for square in squares:
         square.draw(screen)
-        square.update_life(dt)
 
     pygame.display.flip()
-    dt = clock.tick(72) / 1000
 
 pygame.quit()
