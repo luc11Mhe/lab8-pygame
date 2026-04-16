@@ -25,7 +25,7 @@ class Square:
 
         self.dx = random.choice([-1, 1]) * random.uniform(50, self.max_speed)
         self.dy = random.choice([-1, 1]) * random.uniform(50, self.max_speed)
-        
+
         self.color = (
             random.randint(50, 255),
             random.randint(50, 255),
@@ -92,6 +92,14 @@ class Square:
     def draw(self, surface):
         pygame.draw.rect(surface, self.color, (self.x, self.y, self.size, self.size))
 
+    def reset(self):
+        self.life = random.uniform(5, 15)
+
+    def update_life(self, dt):
+        self.life -= dt
+        if self.life <= 0:
+            self.reset()
+
 
 squares = []
 for i in range(50):
@@ -110,10 +118,11 @@ while running:
         square.flee(squares)
 
     for square in squares:
-        square.move()
+        square.move(dt)
 
     for square in squares:
         square.draw(screen)
+        square.update_life(dt)
 
     pygame.display.flip()
     dt = clock.tick(72) / 1000
