@@ -72,7 +72,7 @@ class Square:
             self.y = HEIGHT - self.size
             self.dy *= -1
 
-    def flee(self, all_squares):
+    def flee(self, all_squares, dt):
         for other in all_squares:
             if other is self:
                 continue
@@ -86,20 +86,20 @@ class Square:
                     dx /= dist
                     dy /= dist
 
-                    self.dx += dx * 0.5
-                    self.dy += dy * 0.5
-
-    def draw(self, surface):
-        pygame.draw.rect(surface, self.color, (self.x, self.y, self.size, self.size))
+                    self.dx += dx * 0.5 * dt
+                    self.dy += dy * 0.5 * dt
 
     def update_life(self, dt):
         self.life -= dt
         if self.life <= 0:
             self.reset()
 
+    def draw(self, surface):
+        pygame.draw.rect(surface, self.color, (self.x, self.y, self.size, self.size))
+
 
 squares = []
-for i in range(50):
+for i in range(15):
     squares.append(Square())
 
 
@@ -114,7 +114,7 @@ while running:
             running = False
 
     for square in squares:
-        square.flee(squares)
+        square.flee(squares, dt)
 
     for square in squares:
         square.move(dt)

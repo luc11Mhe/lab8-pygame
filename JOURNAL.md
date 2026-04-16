@@ -389,3 +389,157 @@
 - **Hook Version**: 1.02
 - **Date**: 16-04-2026 20:53
 - **Prompt**: Update the journal with all the prompts i used today
+
+### **New Interaction**
+- **Agent Version**: 2.3
+- **Date**: 16-04-2026 20:54
+- **User**: michee-lucas.izambay@epita.fr
+- **Prompt**: How do I handle boundary collision when the has already passed the wall position?
+- **CoPilot Mode**: Agent
+- **CoPilot Model**: GPT-5.4 mini
+- **Socratic Mode**: ON
+- **Changes Made**: Explained boundary correction by clamping position back inside the wall after movement; no code changes.
+- **Context and Reasons for Changes**: User asked how to handle a square that has already moved past a boundary in the pygame simulation.
+
+### **New Interaction**
+- **Agent Version**: 2.3
+- **Date**: 16-04-2026 20:55
+- **User**: michee-lucas.izambay@epita.fr
+- **Prompt**: How do I use pygame.time.Clock() to calculate time between frames?
+- **CoPilot Mode**: Agent
+- **CoPilot Model**: GPT-5.4 mini
+- **Socratic Mode**: ON
+- **Changes Made**: Explained that Clock.tick returns the frame delta in milliseconds and that dividing by 1000 converts it to seconds; no code changes.
+- **Context and Reasons for Changes**: User asked how to measure elapsed time between frames for consistent motion.
+
+### **New Interaction**
+- **Agent Version**: 2.3
+- **Date**: 16-04-2026 20:56
+- **User**: michee-lucas.izambay@epita.fr
+- **Prompt**: How should I modify position updates to include delta time?
+- **CoPilot Mode**: Agent
+- **CoPilot Model**: GPT-5.4 mini
+- **Socratic Mode**: ON
+- **Changes Made**: Explained scaling position updates by delta time so velocity behaves consistently across frame rates; no code changes.
+- **Context and Reasons for Changes**: User wanted movement updates to use dt correctly in the game loop.
+
+### **New Interaction**
+- **Agent Version**: 2.3
+- **Date**: 16-04-2026 20:57
+- **User**: michee-lucas.izambay@epita.fr
+- **Prompt**: from now on don't give me the answer in code just explain
+- **CoPilot Mode**: Agent
+- **CoPilot Model**: GPT-5.4 mini
+- **Socratic Mode**: ON
+- **Changes Made**: Recorded the preference to keep future replies conceptual and avoid code snippets unless explicitly changed.
+- **Context and Reasons for Changes**: User requested explanation-only responses.
+
+### **New Interaction**
+- **Agent Version**: 2.3
+- **Date**: 16-04-2026 20:58
+- **User**: michee-lucas.izambay@epita.fr
+- **Prompt**: What is delta time and how is it used to scale velocity in a game loop?
+- **CoPilot Mode**: Agent
+- **CoPilot Model**: GPT-5.4 mini
+- **Socratic Mode**: ON
+- **Changes Made**: Explained dt as elapsed time per frame and how multiplying velocity by dt makes motion frame-rate independent; no code changes.
+- **Context and Reasons for Changes**: User wanted the conceptual meaning of delta time and its role in motion scaling.
+
+### **New Interaction**
+- **Agent Version**: 2.3
+- **Date**: 16-04-2026 20:59
+- **User**: michee-lucas.izambay@epita.fr
+- **Prompt**: How can I respawn an object after its lifetime ends in a Pygame simulation?
+- **CoPilot Mode**: Agent
+- **CoPilot Model**: GPT-5.4 mini
+- **Socratic Mode**: ON
+- **Changes Made**: Explained lifetime tracking with a countdown and resetting the object when the timer expires; no code changes.
+- **Context and Reasons for Changes**: User wanted a respawn pattern for timed objects in the simulation.
+
+### **New Interaction**
+- **Agent Version**: 2.3
+- **Date**: 16-04-2026 21:00
+- **User**: michee-lucas.izambay@epita.fr
+- **Prompt**: How can I give the cubes a lifespan that decreases over time?
+- **CoPilot Mode**: Agent
+- **CoPilot Model**: GPT-5.4 mini
+- **Socratic Mode**: ON
+- **Changes Made**: Explained using a per-object lifespan property that decreases by dt each frame and triggers reset on expiry; no code changes.
+- **Context and Reasons for Changes**: User asked how to make cube lifetimes decay in real time.
+
+### **New Interaction**
+- **Agent Version**: 2.3
+- **Date**: 16-04-2026 21:01
+- **User**: michee-lucas.izambay@epita.fr
+- **Prompt**: But how do I track that time ?
+- **CoPilot Mode**: Agent
+- **CoPilot Model**: GPT-5.4 mini
+- **Socratic Mode**: ON
+- **Changes Made**: Explained storing lifetime as an object attribute and decrementing it each frame with dt; no code changes.
+- **Context and Reasons for Changes**: User wanted the mechanism for tracking elapsed lifetime.
+
+### **New Interaction**
+- **Agent Version**: 2.3
+- **Date**: 16-04-2026 21:02
+- **User**: michee-lucas.izambay@epita.fr
+- **Prompt**: Where should I update the timer?
+- **CoPilot Mode**: Agent
+- **CoPilot Model**: GPT-5.4 mini
+- **Socratic Mode**: ON
+- **Changes Made**: Explained updating the timer in the logic phase after movement and before drawing; no code changes.
+- **Context and Reasons for Changes**: User wanted the correct place in the loop to decrement lifespan.
+
+### **New Interaction**
+- **Agent Version**: 2.3
+- **Date**: 16-04-2026 21:03
+- **User**: michee-lucas.izambay@epita.fr
+- **Prompt**: Where should I calculate delta time
+- **CoPilot Mode**: Agent
+- **CoPilot Model**: GPT-5.4 mini
+- **Socratic Mode**: ON
+- **Changes Made**: Explained that dt should be calculated at the start of the loop before any update calls; no code changes.
+- **Context and Reasons for Changes**: User asked where to place Clock.tick-derived dt in the loop.
+
+### **New Interaction**
+- **Agent Version**: 2.3
+- **Date**: 16-04-2026 21:04
+- **User**: michee-lucas.izambay@epita.fr
+- **Prompt**: How do I pass delta time (dt) into class methods so movement can use it properly?
+- **CoPilot Mode**: Agent
+- **CoPilot Model**: GPT-5.4 mini
+- **Socratic Mode**: ON
+- **Changes Made**: Explained adding dt as a method parameter and passing it at the call site for motion updates; no code changes.
+- **Context and Reasons for Changes**: User wanted to thread dt through class methods correctly.
+
+### **New Interaction**
+- **Agent Version**: 2.3
+- **Date**: 16-04-2026 21:05
+- **User**: michee-lucas.izambay@epita.fr
+- **Prompt**: i rearabched the structure does it look good
+- **CoPilot Mode**: Agent
+- **CoPilot Model**: GPT-5.4 mini
+- **Socratic Mode**: ON
+- **Changes Made**: Reviewed the refactored structure and noted it was cleaner, with reset/move/update_life separated; no code changes.
+- **Context and Reasons for Changes**: User asked for feedback on the revised simulation structure.
+
+### **New Interaction**
+- **Agent Version**: 2.3
+- **Date**: 16-04-2026 21:06
+- **User**: michee-lucas.izambay@epita.fr
+- **Prompt**: And now ?
+- **CoPilot Mode**: Agent
+- **CoPilot Model**: GPT-5.4 mini
+- **Socratic Mode**: ON
+- **Changes Made**: Explained that flee() was still frame-dependent and should also respect dt and speed limits; no code changes.
+- **Context and Reasons for Changes**: User wanted a final check on the structure and update flow.
+
+### **New Interaction**
+- **Agent Version**: 2.3
+- **Date**: 16-04-2026 21:07
+- **User**: michee-lucas.izambay@epita.fr
+- **Prompt**: Update the journal with all the prompts i used today
+- **CoPilot Mode**: Agent
+- **CoPilot Model**: GPT-5.4 mini
+- **Socratic Mode**: ON
+- **Changes Made**: Appended detailed journal entries for today’s prompts to JOURNAL.md; no code changes.
+- **Context and Reasons for Changes**: User requested the journal be updated with all prompts from today.
