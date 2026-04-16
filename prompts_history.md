@@ -50,3 +50,6 @@ Automatically captured prompt log. Entries are appended in chronological order (
 ### 16-04-2026 20:47
 - **Prompt**: And now ?
 
+### 16-04-2026 20:53
+- **Prompt**: Update the journal with all the prompts i used today
+
