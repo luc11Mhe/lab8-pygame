@@ -41,3 +41,6 @@ Automatically captured prompt log. Entries are appended in chronological order (
 ### 16-04-2026 20:33
 - **Prompt**: Where should I calculate delta time
 
+### 16-04-2026 20:33
+- **Prompt**: How do I pass delta time (dt) into class methods so movement can use it properly?
+
