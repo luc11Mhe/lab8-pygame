@@ -116,6 +116,6 @@ while running:
         square.draw(screen)
 
     pygame.display.flip()
-    clock.tick(72)
+    dt = clock.tick(72) / 1000
 
 pygame.quit()
