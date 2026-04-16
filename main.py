@@ -58,9 +58,18 @@ class Square:
         self.x += self.dx
         self.y += self.dy
 
-        if self.x <= 0 or self.x >= WIDTH - self.size:
+        if self.x < 0:
+            self.x = 0
             self.dx *= -1
-        if self.y <= 0 or self.y >= HEIGHT - self.size:
+        elif self.x > WIDTH - self.size:
+            self.x = WIDTH - self.size
+            self.dx *= -1
+
+        if self.y < 0:
+            self.y = 0
+            self.dy *= -1
+        elif self.y > HEIGHT - self.size:
+            self.y = HEIGHT - self.size
             self.dy *= -1
 
     def flee(self, all_squares):
