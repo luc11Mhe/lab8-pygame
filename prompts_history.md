@@ -56,3 +56,6 @@ Automatically captured prompt log. Entries are appended in chronological order (
 ### 20-04-2026 10:37
 - **Prompt**: update my code explorer
 
+### 20-04-2026 10:38
+- **Prompt**: Update the code explorer for this workspace at c:\Users\miche\OneDrive\Documenten\lab8-pygame. Analyze the Python source files (especially main.py) and regenerate/update docs/code_explorer.html as a single-file learning dashboard. Preserve existing project context, refresh architecture/pattern explanations, and ensure links/sections are coherent with current code. Make the update directly in workspace files. Return a concise report of what was changed.
+
