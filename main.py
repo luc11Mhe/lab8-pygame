@@ -82,12 +82,23 @@ class Square:
                 dy = self.y - other.y
                 dist = math.hypot(dx, dy)
 
-                if dist < 200 and dist > 0:
+                if 0 < dist < 200:
                     dx /= dist
                     dy /= dist
 
-                    self.dx += dx * 0.5 * dt
-                    self.dy += dy * 0.5 * dt
+                    strength = (200 - dist) / 200
+                    self.dx += dx * 300 * strength * dt
+                    self.dy += dy * 300 * strength * dt
+
+    def chasing(self, all_squares, dt):
+        for other in all_squares:
+            if other is self:
+                continue
+
+        if other.size < self.size:
+            dx = other.x - self.x
+            dy = other.y - self.y
+            dist = math.hypot(dx, dy)
 
     def update_life(self, dt):
         self.life -= dt
@@ -105,7 +116,7 @@ for i in range(15):
 
 running = True
 while running:
-    dt = clock.tick(72) / 1000
+    dt = clock.tick(60) / 1000
 
     screen.fill((30, 30, 30))
 

@@ -133,7 +133,7 @@ pre.snippet { background: #12121e; border-radius: 5px; padding: 0.7rem; font-siz
 <header>
   <h1>Code Explorer</h1>
   <span class="file-badge">main.py</span>
-  <p style="margin-top:0.4rem;">Pygame movement simulation. Focus: loop architecture, square behavior, flee steering, and motion math. Source links: <a href="../main.py">main.py</a> | <a href="../REPORT.md">REPORT.md</a> | <a href="../MY_NOTES.md">MY_NOTES.md</a>.</p>
+  <p style="margin-top:0.4rem;">Pygame movement simulation. Focus: loop architecture, square behavior, flee steering, and motion math. Source links: <a href="../main.py">main.py</a> | <a href="../REPORT.md">REPORT.md</a> | <a href="../MY_NOTES.md">MY_NOTES.md</a> | <a href="../JOURNAL.md">JOURNAL.md</a>.</p>
 </header>
 
 <nav class="tab-nav">
@@ -158,7 +158,7 @@ pre.snippet { background: #12121e; border-radius: 5px; padding: 0.7rem; font-siz
       <button class="arch-btn" onclick="switchArch('df1', this)">Data Flow squares</button>
       <button class="arch-btn" onclick="switchArch('df2', this)">Data Flow dx</button>
       <button class="arch-btn" onclick="switchArch('df3', this)">Data Flow x</button>
-      <button class="arch-btn" onclick="switchArch('opt1', this)">Move Control</button>
+      <button class="arch-btn" onclick="switchArch('opt1', this)">Loop Control</button>
     </div>
 
     <div class="arch-panel active" id="arch-callgraph">
@@ -192,27 +192,27 @@ pre.snippet { background: #12121e; border-radius: 5px; padding: 0.7rem; font-siz
     </div>
 
     <div class="arch-panel" id="arch-df1">
-      <div class="diag-title">Data Flow: squares list</div>
+      <div class="diag-title">Data Flow: squares list (score 2)</div>
       <div class="diag-container" id="diag-data_flow_squares"></div>
       <div class="diag-caption">The global squares list is created once, then read by flee, move, and draw phases every frame.</div>
     </div>
 
     <div class="arch-panel" id="arch-df2">
-      <div class="diag-title">Data Flow: dx velocity</div>
+      <div class="diag-title">Data Flow: dx velocity (score 2)</div>
       <div class="diag-container" id="diag-data_flow_dx"></div>
       <div class="diag-caption">Horizontal velocity starts random, receives flee and jitter adjustments, then contributes to x movement.</div>
     </div>
 
     <div class="arch-panel" id="arch-df3">
-      <div class="diag-title">Data Flow: x position</div>
+      <div class="diag-title">Data Flow: x position (score 3)</div>
       <div class="diag-container" id="diag-data_flow_x"></div>
       <div class="diag-caption">Position is initialized once, advanced by velocity each frame, and constrained by wall bounce logic.</div>
     </div>
 
     <div class="arch-panel" id="arch-opt1">
-      <div class="diag-title">Optional: move control flow</div>
+      <div class="diag-title">Optional: loop control flow</div>
       <div class="diag-container" id="diag-optional_move_flow"></div>
-      <div class="diag-caption">This control flow view helps beginners map each conditional branch inside move before reading line by line.</div>
+      <div class="diag-caption">This control flow view helps beginners map the frame loop branches before reading code line by line.</div>
     </div>
   </div>
 </div>
@@ -288,7 +288,7 @@ pre.snippet { background: #12121e; border-radius: 5px; padding: 0.7rem; font-siz
 
 <div class="tab-panel" id="tab-typehints">
   <div class="type-banner">
-    <div class="score-big">0/5</div>
+    <div class="score-big">1/5</div>
     <div class="score-verdict">Type hint readiness score. The code is very understandable, but static type intent is currently implicit instead of declared.</div>
   </div>
 
@@ -320,18 +320,18 @@ pre.snippet { background: #12121e; border-radius: 5px; padding: 0.7rem; font-siz
 
       <div class="review-item selected" id="ri-0" onclick="selectReview(0)">
         <div class="ri-titlerow">
-          <span class="ri-title">Edge bounce can jitter</span>
-          <span class="badge badge-high">high</span>
-        </div>
-        <div class="ri-note">Position is not clamped after reflection, so squares may re trigger wall checks.</div>
-      </div>
-
-      <div class="review-item" id="ri-1" onclick="selectReview(1)">
-        <div class="ri-titlerow">
           <span class="ri-title">Flee uses corner distance</span>
           <span class="badge badge-medium">medium</span>
         </div>
         <div class="ri-note">Distance from top left corners can distort near field behavior for large size differences.</div>
+      </div>
+
+      <div class="review-item" id="ri-1" onclick="selectReview(1)">
+        <div class="ri-titlerow">
+          <span class="ri-title">Magic behavior numbers</span>
+          <span class="badge badge-medium">medium</span>
+        </div>
+        <div class="ri-note">Jitter and flee tuning values are embedded directly in behavior methods.</div>
       </div>
 
       <div class="review-item" id="ri-2" onclick="selectReview(2)">
@@ -344,10 +344,10 @@ pre.snippet { background: #12121e; border-radius: 5px; padding: 0.7rem; font-siz
 
       <div class="review-item" id="ri-3" onclick="selectReview(3)">
         <div class="ri-titlerow">
-          <span class="ri-title">Missing runtime validation</span>
+          <span class="ri-title">Global bounds coupling</span>
           <span class="badge badge-low">low</span>
         </div>
-        <div class="ri-note">The code assumes generated values always valid and does not guard future external inputs.</div>
+        <div class="ri-note">Class logic depends on WIDTH and HEIGHT globals, which reduces reuse flexibility.</div>
       </div>
 
       <div class="review-item" id="ri-4" onclick="selectReview(4)">
@@ -456,15 +456,6 @@ function switchArch(name, btn) {
 const reviewItems = [
   {
     id: 0,
-    title: 'Edge bounce can jitter',
-    severity: 'high',
-    snippet: 'if self.x <= 0 or self.x >= WIDTH - self.size:\n    self.dx *= -1\nif self.y <= 0 or self.y >= HEIGHT - self.size:\n    self.dy *= -1',
-    shortNote: 'No post bounce clamp',
-    fullExplanation: 'When a position overshoots a wall, direction is flipped but position stays out of bounds for one frame.\nThis can produce repeated flip behavior and visible jitter near edges.\nClamping x and y back into legal ranges immediately after bounce avoids this.',
-    improvementHint: 'After reversing velocity, clamp x and y to the valid window range before the frame ends.'
-  },
-  {
-    id: 1,
     title: 'Flee uses corner distance',
     severity: 'medium',
     snippet: 'dx = self.x - other.x\ndy = self.y - other.y\ndist = math.hypot(dx, dy)',
@@ -473,28 +464,37 @@ const reviewItems = [
     improvementHint: 'Use square center coordinates for flee vectors and keep radius logic in the same space.'
   },
   {
+    id: 1,
+    title: 'Magic behavior numbers',
+    severity: 'medium',
+    snippet: 'if random.random() < 0.2:\n    angle = random.uniform(-0.2, 0.2)\n...\nif dist < 200 and dist > 0:\n    self.dx += dx * 0.5 * dt',
+    shortNote: 'Literals inside core logic',
+    fullExplanation: 'The steering pipeline relies on unnamed constants that are spread across methods.\nThis hides intent and makes balancing harder as behavior grows.\nPromoting these values to named constants keeps tuning safer and more readable.',
+    improvementHint: 'Move jitter chance, jitter angle, flee radius, and flee gain to named module constants.'
+  },
+  {
     id: 2,
     title: 'Quadratic flee scaling',
     severity: 'medium',
-    snippet: 'for square in squares:\n    square.flee(squares)',
+    snippet: 'for square in squares:\n    square.flee(squares, dt)',
     shortNote: 'All pairs each frame',
     fullExplanation: 'Every frame, each square loops over all other squares.\nThis creates O n2 cost, so doubling object count can roughly quadruple work.\nA grid based neighbor lookup can reduce checks to mostly local objects.',
     improvementHint: 'Introduce spatial partitioning with uniform cells to query nearby squares only.'
   },
   {
     id: 3,
-    title: 'Missing runtime validation',
+    title: 'Global bounds coupling',
     severity: 'low',
-    snippet: 'self.size = random.randint(MIN_SIZE, MAX_SIZE)\nself.max_speed = max(1, int(MAX_SPEED * speed_fact))',
-    shortNote: 'Assumes valid constants',
-    fullExplanation: 'The script assumes constants keep valid relationships such as MAX_SIZE larger than MIN_SIZE.\nToday this is true, but future edits could break assumptions silently.\nLightweight startup validation catches invalid ranges early.',
-    improvementHint: 'Add startup checks for constant relationships and fail fast with clear errors.'
+    snippet: 'elif self.x > WIDTH - self.size:\n    self.x = WIDTH - self.size\n    self.dx *= -1',
+    shortNote: 'Hidden world dependency',
+    fullExplanation: 'Square behavior depends on module level WIDTH and HEIGHT values.\nThat works in this lab, but it reduces reuse in alternate world sizes or tests.\nPassing bounds explicitly reduces hidden coupling.',
+    improvementHint: 'Inject bounds via constructor or move method parameters.'
   },
   {
     id: 4,
     title: 'No type annotations yet',
     severity: 'low',
-    snippet: 'def flee(self, all_squares):\n    for other in all_squares:\n        ...',
+    snippet: 'def flee(self, all_squares, dt):\n    for other in all_squares:\n        ...',
     shortNote: 'Static intent not explicit',
     fullExplanation: 'Readers infer that all_squares is a list of Square instances, but tools cannot enforce it.\nMissing annotations reduce IDE feedback quality for larger projects.\nAdding basic type hints improves maintainability without changing runtime behavior.',
     improvementHint: 'Add parameter and return annotations incrementally, starting with public methods.'
@@ -547,6 +547,7 @@ const diagrams = {
     n1 --> n4[math module]
     n5[report md file] --> n1
     n6[notes md file] --> n1
+    n7[journal md file] --> n1
     click n2 href "https://www.pygame.org/docs/" "Open docs"
     click n3 href "https://docs.python.org/3/library/random.html" "Open docs"
     click n4 href "https://docs.python.org/3/library/math.html" "Open docs"`,
@@ -563,6 +564,8 @@ const diagrams = {
       p3-->>p1: velocity adjust
       p1->>p3: call move phase
       p3-->>p1: position update
+      p1->>p3: call life phase
+      p3-->>p1: life refresh check
       p1->>p4: call draw phase
       p4-->>p1: frame ready
       p1->>p4: flip display now
@@ -622,20 +625,13 @@ const diagrams = {
     n5 --> n6[next draw frame]`,
 
   optional_move_flow: String.raw`graph TD
-    n1[start move step] --> n2[random jitter test]
-    n2 --> n3[rotate velocity]
-    n2 --> n4[skip rotate path]
-    n3 --> n5[measure speed now]
-    n4 --> n5
-    n5 --> n6[scale to max]
-    n6 --> n7[clamp dx dy]
-    n7 --> n8[advance position]
-    n8 --> n9[check x walls]
-    n8 --> n10[check y walls]
-    n9 --> n11[flip dx sign]
-    n10 --> n12[flip dy sign]
-    n11 --> n13[end move step]
-    n12 --> n13`
+    n1[start while loop] --> n2[compute dt value]
+    n2 --> n3[poll event list]
+    n3 --> n4[quit event test]
+    n4 --> n5[set running false]
+    n4 --> n6[run update passes]
+    n6 --> n7[draw and flip]
+    n7 --> n1`
 };
 
 let renderCounter = 0;
