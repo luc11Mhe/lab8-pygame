@@ -78,8 +78,8 @@ class Square:
                 continue
 
             if other.size > self.size:
-                dx = self.x - other.x
-                dy = self.y - other.y
+                dx = (self.x + self.size / 2) - (other.x + other.size / 2)
+                dy = (self.y + self.size / 2) - (other.y + other.size / 2)
                 dist = math.hypot(dx, dy)
 
                 if 0 < dist < 200:
@@ -95,10 +95,18 @@ class Square:
             if other is self:
                 continue
 
-        if other.size < self.size:
-            dx = other.x - self.x
-            dy = other.y - self.y
-            dist = math.hypot(dx, dy)
+            if other.size < self.size:
+                dx = (self.x + self.size / 2) - (other.x + other.size / 2)
+                dy = (self.y + self.size / 2) - (other.y + other.size / 2)
+                dist = math.hypot(dx, dy)
+
+                if 0 < dist < 200:
+                    dx /= dist
+                    dy /= dist
+
+                    strength = (200 - dist) / 200
+                    self.dx += dx * 200 * strength * dt
+                    self.dy += dy * 200 * strength * dt
 
     def update_life(self, dt):
         self.life -= dt
@@ -126,6 +134,7 @@ while running:
 
     for square in squares:
         square.flee(squares, dt)
+        square.chasing(squares, dt)
 
     for square in squares:
         square.move(dt)
