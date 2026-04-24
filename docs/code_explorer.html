@@ -261,7 +261,7 @@ pre.snippet { background: #12121e; border-radius: 5px; padding: 0.7rem; font-siz
 
       <div class="pattern-card">
         <div class="pattern-header"><span class="pattern-icon">⚠️</span><span class="pattern-title">Magic behavior numbers</span></div>
-        <div class="pattern-desc">Thresholds like 0.2 jitter chance, 0.5 flee impulse, and 200 flee radius are embedded inside methods.</div>
+        <div class="pattern-desc">Thresholds like 0.2 jitter chance, plus 200 and 300 steering gains, and 200 interaction radius are embedded inside methods.</div>
         <div class="pattern-layers">
           <div class="layer layer-basics"><span class="layer-label">Basics:</span> Hardcoded values hide design intent from readers.</div>
           <div class="layer layer-eng"><span class="layer-label">Engineering Insight:</span> Tuning behavior becomes risky because values are distributed and unnamed.</div>
@@ -272,15 +272,15 @@ pre.snippet { background: #12121e; border-radius: 5px; padding: 0.7rem; font-siz
       </div>
 
       <div class="pattern-card">
-        <div class="pattern-header"><span class="pattern-icon">⚠️</span><span class="pattern-title">Tight global coupling</span></div>
-        <div class="pattern-desc">Square methods depend on global WIDTH and HEIGHT directly, which makes reuse in other worlds harder.</div>
+        <div class="pattern-header"><span class="pattern-icon">⚠️</span><span class="pattern-title">Chasing direction mismatch</span></div>
+        <div class="pattern-desc">The chasing vector currently points from other to self, then gets added to velocity, so the square is pushed away instead of pulled toward smaller targets.</div>
         <div class="pattern-layers">
-          <div class="layer layer-basics"><span class="layer-label">Basics:</span> Hidden dependencies surprise readers when code is reused.</div>
-          <div class="layer layer-eng"><span class="layer-label">Engineering Insight:</span> Injecting bounds or world context enables isolated tests and alternate viewports.</div>
-          <div class="layer layer-arch"><span class="layer-label">Architecture Insight:</span> Explicit dependencies improve portability toward multi scene simulation design.</div>
+          <div class="layer layer-basics"><span class="layer-label">Basics:</span> The name says chase but current math behaves like flee.</div>
+          <div class="layer layer-eng"><span class="layer-label">Engineering Insight:</span> Inverted force direction can make behavior tuning inconsistent.</div>
+          <div class="layer layer-arch"><span class="layer-label">Architecture Insight:</span> Correct pursuit semantics matter before adding collisions and richer AI.</div>
         </div>
-        <div class="fix-hint">Improvement hint: pass boundary values from a world object or constructor parameter.</div>
-        <a class="ext-link" href="https://en.wikipedia.org/wiki/Coupling_(computer_programming)">Wikipedia: coupling in software</a>
+        <div class="fix-hint">Improvement hint: compute direction from self center toward other center for pursuit force.</div>
+        <a class="ext-link" href="https://en.wikipedia.org/wiki/Vector_(mathematics_and_physics)">Wikipedia: vectors</a>
       </div>
     </div>
   </div>
@@ -288,26 +288,24 @@ pre.snippet { background: #12121e; border-radius: 5px; padding: 0.7rem; font-siz
 
 <div class="tab-panel" id="tab-typehints">
   <div class="type-banner">
-    <div class="score-big">1/5</div>
-    <div class="score-verdict">Type hint readiness score. The code is very understandable, but static type intent is currently implicit instead of declared.</div>
+    <div class="score-big">5/5</div>
+    <div class="score-verdict">Type hints are consistently applied across parameters, return values, containers, and key attributes.</div>
   </div>
 
   <div class="two-col">
     <div class="card">
       <h3>Strengths</h3>
       <ul style="padding-left:1.1rem;color:var(--muted);font-size:0.86rem;">
-        <li>Data roles are consistent: position and velocity fields are numeric across methods.</li>
-        <li>Method responsibilities are compact, so adding future annotations will be straightforward.</li>
+        <li>All behavior methods annotate input parameters and return values, including dt and draw surface types.</li>
+        <li>Typed containers and aliases are present through List[Square] and tuple[int, int, int] color declarations.</li>
       </ul>
     </div>
 
     <div class="card">
       <h3>Gaps</h3>
       <ul style="padding-left:1.1rem;color:var(--muted);font-size:0.86rem;">
-        <li>No parameter annotations, including all_squares in flee.</li>
-        <li>No return annotations on move, flee, draw, and constructor helpers.</li>
-        <li>No explicit typed containers such as list[Square] for collections.</li>
-        <li>No declared surface or color tuple types for draw inputs and color fields.</li>
+        <li>No checklist gaps detected in this file for baseline type hint coverage.</li>
+        <li>Optional style improvement: modernize typing.List to built in list generics if project version policy allows.</li>
       </ul>
     </div>
   </div>
@@ -320,42 +318,42 @@ pre.snippet { background: #12121e; border-radius: 5px; padding: 0.7rem; font-siz
 
       <div class="review-item selected" id="ri-0" onclick="selectReview(0)">
         <div class="ri-titlerow">
-          <span class="ri-title">Flee uses corner distance</span>
-          <span class="badge badge-medium">medium</span>
+          <span class="ri-title">Chasing applies away vector</span>
+          <span class="badge badge-high">high</span>
         </div>
-        <div class="ri-note">Distance from top left corners can distort near field behavior for large size differences.</div>
+        <div class="ri-note">Current chase math uses self minus other, then adds that vector to velocity.</div>
       </div>
 
       <div class="review-item" id="ri-1" onclick="selectReview(1)">
         <div class="ri-titlerow">
-          <span class="ri-title">Magic behavior numbers</span>
+          <span class="ri-title">Dual all pairs loops</span>
           <span class="badge badge-medium">medium</span>
         </div>
-        <div class="ri-note">Jitter and flee tuning values are embedded directly in behavior methods.</div>
+        <div class="ri-note">flee and chasing each do full neighbor scans every frame.</div>
       </div>
 
       <div class="review-item" id="ri-2" onclick="selectReview(2)">
         <div class="ri-titlerow">
-          <span class="ri-title">Quadratic flee scaling</span>
+          <span class="ri-title">Magic steering constants</span>
           <span class="badge badge-medium">medium</span>
         </div>
-        <div class="ri-note">Each square scans all others every frame, creating O n2 complexity.</div>
+        <div class="ri-note">Random chance, angle, radius, and force values are embedded in methods.</div>
       </div>
 
       <div class="review-item" id="ri-3" onclick="selectReview(3)">
         <div class="ri-titlerow">
-          <span class="ri-title">Global bounds coupling</span>
+          <span class="ri-title">Reset method is dense</span>
           <span class="badge badge-low">low</span>
         </div>
-        <div class="ri-note">Class logic depends on WIDTH and HEIGHT globals, which reduces reuse flexibility.</div>
+        <div class="ri-note">reset currently handles size, speed, spawn, color, and life in one place.</div>
       </div>
 
       <div class="review-item" id="ri-4" onclick="selectReview(4)">
         <div class="ri-titlerow">
-          <span class="ri-title">No type annotations yet</span>
+          <span class="ri-title">Legacy generic style</span>
           <span class="badge badge-low">low</span>
         </div>
-        <div class="ri-note">Type intent is readable to humans but not checked by static tools.</div>
+        <div class="ri-note">The code uses typing.List instead of built in list style generics.</div>
       </div>
     </div>
 
@@ -369,7 +367,7 @@ pre.snippet { background: #12121e; border-radius: 5px; padding: 0.7rem; font-siz
       <div class="section-head green">Performance Wins</div>
       <div class="perf-card">
         <div class="perf-title">Frame cap control</div>
-        <div class="perf-desc">clock.tick at 72 avoids unconstrained loop speed and gives predictable CPU demand.</div>
+        <div class="perf-desc">clock.tick at 60 avoids unconstrained loop speed and gives predictable CPU demand.</div>
       </div>
       <div class="perf-card">
         <div class="perf-title">Velocity clamp guard</div>
@@ -379,8 +377,8 @@ pre.snippet { background: #12121e; border-radius: 5px; padding: 0.7rem; font-siz
     <div>
       <div class="section-head red">Performance Risks</div>
       <div class="perf-card">
-        <div class="perf-title">Nested flee comparisons</div>
-        <div class="perf-desc">The flee phase does all pair checks every frame, which grows quickly with square count.</div>
+        <div class="perf-title">Nested neighbor comparisons</div>
+        <div class="perf-desc">flee and chasing both do all pair checks every frame, which grows quickly with square count.</div>
       </div>
       <div class="perf-card">
         <div class="perf-title">Heavy math per object</div>
@@ -456,48 +454,48 @@ function switchArch(name, btn) {
 const reviewItems = [
   {
     id: 0,
-    title: 'Flee uses corner distance',
-    severity: 'medium',
-    snippet: 'dx = self.x - other.x\ndy = self.y - other.y\ndist = math.hypot(dx, dy)',
-    shortNote: 'Top left comparison only',
-    fullExplanation: 'Distance currently compares top left positions of squares, not their centers.\nWith large size differences, repulsion can start too early or too late relative to visual overlap.\nCenter based vectors generally produce more natural steering behavior.',
-    improvementHint: 'Use square center coordinates for flee vectors and keep radius logic in the same space.'
+    title: 'Chasing applies away vector',
+    severity: 'high',
+    snippet: 'dx = (self.x + self.size / 2) - (other.x + other.size / 2)\ndy = (self.y + self.size / 2) - (other.y + other.size / 2)\nself.dx += dx * 200 * strength * dt',
+    shortNote: 'Force direction appears inverted',
+    fullExplanation: 'In chasing, the computed direction vector points from other toward self.\nAdding that vector to self velocity pushes self farther away from smaller targets.\nThis likely conflicts with the method name and intended behavior.',
+    improvementHint: 'Use target minus self center coordinates for pursuit, or rename method if repulsion is intended.'
   },
   {
     id: 1,
-    title: 'Magic behavior numbers',
+    title: 'Dual all pairs loops',
     severity: 'medium',
-    snippet: 'if random.random() < 0.2:\n    angle = random.uniform(-0.2, 0.2)\n...\nif dist < 200 and dist > 0:\n    self.dx += dx * 0.5 * dt',
-    shortNote: 'Literals inside core logic',
-    fullExplanation: 'The steering pipeline relies on unnamed constants that are spread across methods.\nThis hides intent and makes balancing harder as behavior grows.\nPromoting these values to named constants keeps tuning safer and more readable.',
-    improvementHint: 'Move jitter chance, jitter angle, flee radius, and flee gain to named module constants.'
+    snippet: 'for square in squares:\n    square.flee(squares, dt)\n    square.chasing(squares, dt)',
+    shortNote: 'Two quadratic passes each frame',
+    fullExplanation: 'Each square loops every other square in flee and again in chasing.\nTotal comparisons grow as O n2, and duplicated passes increase constant cost.\nThis is manageable now but becomes the main bottleneck as N grows.',
+    improvementHint: 'Share one neighbor iteration pass or use spatial buckets to query only local neighbors.'
   },
   {
     id: 2,
-    title: 'Quadratic flee scaling',
+    title: 'Magic steering constants',
     severity: 'medium',
-    snippet: 'for square in squares:\n    square.flee(squares, dt)',
-    shortNote: 'All pairs each frame',
-    fullExplanation: 'Every frame, each square loops over all other squares.\nThis creates O n2 cost, so doubling object count can roughly quadruple work.\nA grid based neighbor lookup can reduce checks to mostly local objects.',
-    improvementHint: 'Introduce spatial partitioning with uniform cells to query nearby squares only.'
+    snippet: 'if random.random() < 0.2:\n    angle = random.uniform(-0.2, 0.2)\nif 0 < dist < 200:\n    self.dx += dx * 300 * strength * dt',
+    shortNote: 'Behavior tuning is hardcoded',
+    fullExplanation: 'Jitter probability, jitter angle range, interaction radius, and force gains are inline literals.\nThat makes gameplay balancing harder because intent is not named.\nExtracting constants improves readability and controlled experiments.',
+    improvementHint: 'Create named module constants for steering probabilities, angles, force gains, and ranges.'
   },
   {
     id: 3,
-    title: 'Global bounds coupling',
+    title: 'Reset method is dense',
     severity: 'low',
-    snippet: 'elif self.x > WIDTH - self.size:\n    self.x = WIDTH - self.size\n    self.dx *= -1',
-    shortNote: 'Hidden world dependency',
-    fullExplanation: 'Square behavior depends on module level WIDTH and HEIGHT values.\nThat works in this lab, but it reduces reuse in alternate world sizes or tests.\nPassing bounds explicitly reduces hidden coupling.',
-    improvementHint: 'Inject bounds via constructor or move method parameters.'
+    snippet: 'def reset(self) -> None:\n    self.size = ...\n    self.max_speed = ...\n    self.x = ...\n    self.color = ...\n    self.life = ...',
+    shortNote: 'Many responsibilities in one method',
+    fullExplanation: 'reset currently handles sizing, speed derivation, spawn placement, color assignment, and lifespan.\nThis is still readable, but it is a lot of policy in one location.\nSmall helper methods could separate spawn policy from visual policy.',
+    improvementHint: 'Split reset into helper steps such as assign_size_speed, assign_spawn, and assign_style.'
   },
   {
     id: 4,
-    title: 'No type annotations yet',
+    title: 'Legacy generic style',
     severity: 'low',
-    snippet: 'def flee(self, all_squares, dt):\n    for other in all_squares:\n        ...',
-    shortNote: 'Static intent not explicit',
-    fullExplanation: 'Readers infer that all_squares is a list of Square instances, but tools cannot enforce it.\nMissing annotations reduce IDE feedback quality for larger projects.\nAdding basic type hints improves maintainability without changing runtime behavior.',
-    improvementHint: 'Add parameter and return annotations incrementally, starting with public methods.'
+    snippet: 'from typing import List\ndef flee(self, all_squares: List["Square"], dt: float) -> None:',
+    shortNote: 'Type style can be modernized',
+    fullExplanation: 'Typing coverage is strong, but this file still uses List from typing.\nModern Python typically uses built in list generic syntax.\nThis is not a correctness issue, only a style modernization opportunity.',
+    improvementHint: 'Use list[Square] style when project Python version policy allows it.'
   }
 ];
 
@@ -534,12 +532,14 @@ const diagrams = {
     n4 --> n5[start frame loop]
     n5 --> n6[poll input events]
     n6 --> n7[run flee phase]
-    n7 --> n8[run move phase]
-    n8 --> n9[run draw phase]
-    n9 --> n10[flip display frame]
-    n10 --> n11[limit frame rate]
-    n11 --> n5
-    n5 --> n12[quit pygame clean]`,
+    n7 --> n8[run chase phase]
+    n8 --> n9[run move phase]
+    n9 --> n10[run life phase]
+    n10 --> n11[run draw phase]
+    n11 --> n12[flip display frame]
+    n12 --> n13[limit frame rate]
+    n13 --> n5
+    n5 --> n14[quit pygame clean]`,
 
   dependency_graph: String.raw`graph LR
     n1[main py file] --> n2[pygame module]
@@ -562,6 +562,8 @@ const diagrams = {
     loop each frame cycle
       p1->>p3: call flee phase
       p3-->>p1: velocity adjust
+      p1->>p3: call chase phase
+      p3-->>p1: chase adjust
       p1->>p3: call move phase
       p3-->>p1: position update
       p1->>p3: call life phase
