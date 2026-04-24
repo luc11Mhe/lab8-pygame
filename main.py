@@ -1,13 +1,17 @@
 import pygame
 import random
 import math
+from typing import List
 
 pygame.init()
-MIN_SIZE = 10
-MAX_SIZE = 50
-MAX_SPEED = 200
 
-WIDTH, HEIGHT = 1080, 920
+MIN_SIZE: int = 10
+MAX_SIZE: int = 50
+MAX_SPEED: int = 200
+
+WIDTH: int = 1080
+HEIGHT: int = 920
+
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Moving Squares")
 
@@ -15,43 +19,44 @@ clock = pygame.time.Clock()
 
 
 class Square:
-    def __init__(self):
+    def __init__(self) -> None:
         self.reset()
 
-    def reset(self):
-        self.size = random.randint(MIN_SIZE, MAX_SIZE)
-        speed_fact = (MAX_SIZE - self.size) / (MAX_SIZE - MIN_SIZE + 1)
-        self.max_speed = max(1, int(MAX_SPEED * speed_fact))
+    def reset(self) -> None:
+        self.size: int = random.randint(MIN_SIZE, MAX_SIZE)
 
-        self.x = random.randint(0, WIDTH - self.size)
-        self.y = random.randint(0, HEIGHT - self.size)
+        speed_fact: float = (MAX_SIZE - self.size) / (MAX_SIZE - MIN_SIZE + 1)
+        self.max_speed: float = max(1.0, MAX_SPEED * speed_fact)
 
-        self.dx = random.choice([-1, 1]) * random.uniform(50, self.max_speed)
-        self.dy = random.choice([-1, 1]) * random.uniform(50, self.max_speed)
+        self.x: float = float(random.randint(0, WIDTH - self.size))
+        self.y: float = float(random.randint(0, HEIGHT - self.size))
 
-        self.color = (
+        self.dx: float = random.choice([-1, 1]) * random.uniform(50, self.max_speed)
+        self.dy: float = random.choice([-1, 1]) * random.uniform(50, self.max_speed)
+
+        self.color: tuple[int, int, int] = (
             random.randint(50, 255),
             random.randint(50, 255),
             random.randint(50, 255),
         )
 
-        self.life = random.uniform(5, 15)
+        self.life: float = random.uniform(5, 15)
 
-    def move(self, dt):
+    def move(self, dt: float) -> None:
         if random.random() < 0.2:
-            angle = random.uniform(-0.2, 0.2)
-            cos_a = math.cos(angle)
-            sin_a = math.sin(angle)
+            angle: float = random.uniform(-0.2, 0.2)
+            cos_a: float = math.cos(angle)
+            sin_a: float = math.sin(angle)
 
-            new_dx = self.dx * cos_a - self.dy * sin_a
-            new_dy = self.dx * sin_a + self.dy * cos_a
+            new_dx: float = self.dx * cos_a - self.dy * sin_a
+            new_dy: float = self.dx * sin_a + self.dy * cos_a
 
-            self.dx = new_dx
-            self.dy = new_dy
+            self.dx, self.dy = new_dx, new_dy
 
-        speed = math.sqrt(self.dx**2 + self.dy**2)
+        speed: float = math.sqrt(self.dx**2 + self.dy**2)
+
         if speed > 0:
-            factor = min(self.max_speed, speed) / speed
+            factor: float = min(self.max_speed, speed) / speed
             self.dx *= factor
             self.dy *= factor
 
@@ -72,59 +77,56 @@ class Square:
             self.y = HEIGHT - self.size
             self.dy *= -1
 
-    def flee(self, all_squares, dt):
+    def flee(self, all_squares: List["Square"], dt: float) -> None:
         for other in all_squares:
             if other is self:
                 continue
 
             if other.size > self.size:
-                dx = (self.x + self.size / 2) - (other.x + other.size / 2)
-                dy = (self.y + self.size / 2) - (other.y + other.size / 2)
-                dist = math.hypot(dx, dy)
+                dx: float = (self.x + self.size / 2) - (other.x + other.size / 2)
+                dy: float = (self.y + self.size / 2) - (other.y + other.size / 2)
+                dist: float = math.hypot(dx, dy)
 
                 if 0 < dist < 200:
                     dx /= dist
                     dy /= dist
 
-                    strength = (200 - dist) / 200
+                    strength: float = (200 - dist) / 200
                     self.dx += dx * 300 * strength * dt
                     self.dy += dy * 300 * strength * dt
 
-    def chasing(self, all_squares, dt):
+    def chasing(self, all_squares: List["Square"], dt: float) -> None:
         for other in all_squares:
             if other is self:
                 continue
 
             if other.size < self.size:
-                dx = (self.x + self.size / 2) - (other.x + other.size / 2)
-                dy = (self.y + self.size / 2) - (other.y + other.size / 2)
-                dist = math.hypot(dx, dy)
+                dx: float = (self.x + self.size / 2) - (other.x + other.size / 2)
+                dy: float = (self.y + self.size / 2) - (other.y + other.size / 2)
+                dist: float = math.hypot(dx, dy)
 
                 if 0 < dist < 200:
                     dx /= dist
                     dy /= dist
 
-                    strength = (200 - dist) / 200
+                    strength: float = (200 - dist) / 200
                     self.dx += dx * 200 * strength * dt
                     self.dy += dy * 200 * strength * dt
 
-    def update_life(self, dt):
+    def update_life(self, dt: float) -> None:
         self.life -= dt
         if self.life <= 0:
             self.reset()
 
-    def draw(self, surface):
+    def draw(self, surface: pygame.Surface) -> None:
         pygame.draw.rect(surface, self.color, (self.x, self.y, self.size, self.size))
 
 
-squares = []
-for i in range(15):
-    squares.append(Square())
+squares: List[Square] = [Square() for _ in range(15)]
 
-
-running = True
+running: bool = True
 while running:
-    dt = clock.tick(60) / 1000
+    dt: float = clock.tick(60) / 1000.0
 
     screen.fill((30, 30, 30))
 
