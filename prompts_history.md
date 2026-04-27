@@ -80,3 +80,6 @@ Automatically captured prompt log. Entries are appended in chronological order (
 ### 27-04-2026 14:26
 - **Prompt**: make the flash quiz
 
+### 27-04-2026 14:26
+- **Prompt**: Generate an interactive flash quiz site for the pygame project at c:\Users\miche\OneDrive\Documenten\lab8-pygame.  Analyze the main.py file and any other Python files to create a comprehensive study tool with:  1. **Flashcards** covering:    - Key concepts (physics, AI behavior, game loops, delta time)    - Function/method signatures and purposes    - Class attributes and their roles    - Design patterns used  2. **Quiz Questions** with:    - Multiple choice questions about the codebase    - Traceability questions (e.g., "What function handles collision?")    - Contextual questions tied to specific code sections    - Difficulty levels (beginner, intermediate, advanced)  3. **Interactive Features**:    - Flip cards to reveal answers    - Track progress/score    - Filter by topic or difficulty    - Code snippet references  Create a single interactive HTML file (docs/flash-quiz.html) that students can open in a browser to study and test their understanding of the pygame simulation system.  Return a summary of what was created, including the number of flashcards and quiz questions generated.
+
