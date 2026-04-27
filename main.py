@@ -1,7 +1,7 @@
 import pygame
 import random
 import math
-from typing import List
+from typing import List, Optional, Tuple
 
 pygame.init()
 
@@ -12,10 +12,10 @@ MAX_SPEED: int = 200
 WIDTH: int = 1080
 HEIGHT: int = 920
 
-screen = pygame.display.set_mode((WIDTH, HEIGHT))
+screen: pygame.Surface = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Moving Squares")
 
-clock = pygame.time.Clock()
+clock: pygame.time.Clock = pygame.time.Clock()
 
 
 class Square:
@@ -34,7 +34,7 @@ class Square:
         self.dx: float = random.choice([-1, 1]) * random.uniform(50, self.max_speed)
         self.dy: float = random.choice([-1, 1]) * random.uniform(50, self.max_speed)
 
-        self.color: tuple[int, int, int] = (
+        self.color: Tuple[int, int, int] = (
             random.randint(50, 255),
             random.randint(50, 255),
             random.randint(50, 255),
@@ -43,7 +43,8 @@ class Square:
         self.life: float = random.uniform(5, 15)
 
     def move(self, dt: float) -> None:
-        if random.random() < 0.2:
+
+        if random.random() < 0.02:
             angle: float = random.uniform(-0.2, 0.2)
             cos_a: float = math.cos(angle)
             sin_a: float = math.sin(angle)
@@ -53,8 +54,7 @@ class Square:
 
             self.dx, self.dy = new_dx, new_dy
 
-        speed: float = math.sqrt(self.dx**2 + self.dy**2)
-
+        speed: float = math.hypot(self.dx, self.dy)
         if speed > 0:
             factor: float = min(self.max_speed, speed) / speed
             self.dx *= factor
@@ -92,26 +92,34 @@ class Square:
                     dy /= dist
 
                     strength: float = (200 - dist) / 200
-                    self.dx += dx * 300 * strength * dt
-                    self.dy += dy * 300 * strength * dt
+                    self.dx += dx * 500 * strength * dt
+                    self.dy += dy * 500 * strength * dt
 
     def chasing(self, all_squares: List["Square"], dt: float) -> None:
+        closest: Optional[Tuple[float, float, float]] = None
+        closest_dist: float = float("inf")
+
         for other in all_squares:
-            if other is self:
+            if other is self or other.size >= self.size:
                 continue
 
-            if other.size < self.size:
-                dx: float = (self.x + self.size / 2) - (other.x + other.size / 2)
-                dy: float = (self.y + self.size / 2) - (other.y + other.size / 2)
-                dist: float = math.hypot(dx, dy)
+            dx: float = (other.x + other.size / 2) - (self.x + self.size / 2)
+            dy: float = (other.y + other.size / 2) - (self.y + self.size / 2)
+            dist: float = math.hypot(dx, dy)
 
-                if 0 < dist < 200:
-                    dx /= dist
-                    dy /= dist
+            if dist < closest_dist:
+                closest_dist = dist
+                closest = (dx, dy, dist)
 
-                    strength: float = (200 - dist) / 200
-                    self.dx += dx * 200 * strength * dt
-                    self.dy += dy * 200 * strength * dt
+        if closest and 0 < closest_dist < 200:
+            dx, dy, dist = closest
+
+            dx /= dist
+            dy /= dist
+
+            strength: float = (200 - dist) / 200
+            self.dx += dx * 600 * strength * dt
+            self.dy += dy * 600 * strength * dt
 
     def update_life(self, dt: float) -> None:
         self.life -= dt
@@ -126,7 +134,7 @@ squares: List[Square] = [Square() for _ in range(15)]
 
 running: bool = True
 while running:
-    dt: float = clock.tick(60) / 1000.0
+    dt: float = clock.tick(72) / 1000.0
 
     screen.fill((30, 30, 30))
 
@@ -136,6 +144,8 @@ while running:
 
     for square in squares:
         square.flee(squares, dt)
+
+    for square in squares:
         square.chasing(squares, dt)
 
     for square in squares:
