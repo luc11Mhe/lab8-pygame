@@ -621,3 +621,19 @@
 - **Hook Version**: 1.02
 - **Date**: 27-04-2026 14:16
 - **Prompt**: Generate comprehensive architecture documentation for the pygame project at c:\Users\miche\OneDrive\Documenten\lab8-pygame.  Analyze main.py and any other Python files to understand the project structure, key classes, functions, and their relationships. Create docs/architecture.md with the following sections: 1. A system architecture diagram (Mermaid graph) showing major components and their relationships 2. A class/function hierarchy diagram if applicable 3. A data flow diagram showing how data moves through the system 4. Brief descriptions of each major component  Then, optionally convert the markdown documentation into a static docs/architecture.html file for easy viewing.  Return a summary of what was created.
+
+### **New Interaction**
+- **Agent Version**: 2.3
+- **Date**: 27-04-2026 14:17
+- **User**: michee-lucas.izambay@epita.fr
+- **Prompt**: Generate comprehensive architecture documentation for the pygame project at c:\Users\miche\OneDrive\Documenten\lab8-pygame. Analyze main.py and any other Python files to understand the project structure, key classes, functions, and their relationships. Create docs/architecture.md with the following sections: 1. A system architecture diagram (Mermaid graph) showing major components and their relationships 2. A class/function hierarchy diagram if applicable 3. A data flow diagram showing how data moves through the system 4. Brief descriptions of each major component Then, optionally convert the markdown documentation into a static docs/architecture.html file for easy viewing. Return a summary of what was created.
+- **CoPilot Mode**: Agent
+- **CoPilot Model**: Claude Haiku 4.5
+- **Socratic Mode**: OFF
+- **Changes Made**: Created docs/architecture.md with 10 comprehensive sections including system architecture diagram, class hierarchy diagram, data flow diagram, game loop sequence diagram, component descriptions, AI behavior details, physics system documentation, data structures, design patterns, and performance characteristics. Also created docs/architecture.html as a static, styled HTML version of the same documentation with Mermaid diagram rendering.
+- **Context and Reasons for Changes**: User requested comprehensive architecture documentation for the pygame simulation project. Analyzed main.py to identify the Square entity class, game loop structure, AI behaviors (flee/chase), physics engine, and rendering system. Created Mermaid diagrams showing system architecture (5 subsystems), class relationships, data flow through game frames, and sequence diagram of the game loop. Documented all major components, constants, AI logic, physics calculations, and design patterns. Generated both Markdown and HTML versions for accessibility and viewing flexibility.
+
+### **New Interaction**
+- **Hook Version**: 1.02
+- **Date**: 27-04-2026 14:18
+- **Prompt**: Log the following entry to JOURNAL.md at the end of the file:  **Timestamp:** 2026-04-27  **Prompt:** User requested architecture graph generation for pygame project  **Action:** Used architecture-graphs agent to generate comprehensive architecture documentation  **Output:**  - Created docs/architecture.md with 10 detailed sections (system architecture diagram, class hierarchy, data flow, sequence diagram, component descriptions, AI behavior, physics system, data structures, design patterns, performance metrics) - Created docs/architecture.html with interactive Mermaid diagrams and responsive styling - Documented 15-entity Square system with O(nÂ²) AI, frame-rate independent physics, and emergent behavior patterns  **Notes:** Architecture documentation is now available in both markdown and interactive HTML formats for easy reference and understanding of the pygame simulation system.
