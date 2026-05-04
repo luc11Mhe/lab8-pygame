@@ -1,7 +1,7 @@
 # Exam
 
 ## Q2. Same Size Respawn Feature
-It will be better to test my codes without adding this feature to main loop cause i have issues with it.
+It will be better to test my codes without adding this feature to main loop cause i have issues with it. The speed is to high i've tried to update it several times but i lost to much time that's why i will leave it like that;
 
 ## Q3. Screen Wrapping Feature
 For this to work i will not remove the bouncing mechanism will just put it in comments. For his question need to make sceren wrapping everywhere. So horizontally and vertically i think it kind of works it's a bit slow but it works.
@@ -29,6 +29,10 @@ Instead of removing the square from the list I chose to call its `reset()` metho
 The goal is the same as in exercise 5 the difference is it needs to get bigger by proportion
 
 ## Q7. Trails Feature
+The visual effect:
+screen is cleared every frame => trails flicker
+The trails flicker because the screen is cleared each frame.
+A fix could be to save the previous positions and redraw it every frame or maybe change the surface
 
 
 ## Q8. Testing Speed Feature

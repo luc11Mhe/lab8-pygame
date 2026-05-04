@@ -12,6 +12,8 @@ MAX_SPEED: int = 0
 WIDTH: int = 1080
 HEIGHT: int = 920
 
+TRAILS_LENGTH: int = 30
+
 screen: pygame.Surface = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Moving Squares")
 
@@ -21,6 +23,7 @@ clock: pygame.time.Clock = pygame.time.Clock()
 class Square:
     def __init__(self) -> None:
         self.reset()
+        self.trail: List[Tuple[float, float]] = []
 
     def move(self, dt: float) -> None:
 
@@ -69,6 +72,11 @@ class Square:
             self.y = HEIGHT
         elif self.y > HEIGHT:
             self.y = 0
+
+        self.trail.append((self.x + self.size/2, self.y + self.size/2))
+
+        if len(self.trail) > TRAILS_LENGTH:
+         self.trail.pop(0)
 
     def check_collision(self, other: "Square") -> bool:
         rect1 = pygame.Rect(self.x, self.y, self.size, self.size)
@@ -166,6 +174,11 @@ class Square:
 
     def draw(self, surface: pygame.Surface) -> None:
         pygame.draw.rect(surface, self.color, (self.x, self.y, self.size, self.size))
+
+        #
+        for i in range(1, len(self.trail)):
+         pygame.draw.line( surface, self.color, self.trail[i - 1], self.trail[i], 2)
+        
 
 
 squares: List[Square] = []
