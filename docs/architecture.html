@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pygame Square Simulation - Architecture Documentation</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+        }
+        
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+        }
+        
+        .subtitle {
+            color: #7f8c8d;
+            font-size: 1.1em;
+            margin-bottom: 30px;
+            font-style: italic;
+        }
+        
+        h2 {
+            color: #2c3e50;
+            margin-top: 40px;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+            border-left: 4px solid #3498db;
+            padding-left: 15px;
+        }
+        
+        h3 {
+            color: #34495e;
+            margin-top: 25px;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+        
+        .diagram-section {
+            background: #f8f9fa;
+            border: 1px solid #e1e8ed;
+            border-radius: 6px;
+            padding: 20px;
+            margin: 20px 0;
+            overflow-x: auto;
+        }
+        
+        .mermaid {
+            display: flex;
+            justify-content: center;
+            background: white;
+            padding: 15px;
+            border-radius: 4px;
+            margin: 15px 0;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            background: white;
+        }
+        
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        
+        th {
+            background-color: #3498db;
+            color: white;
+            font-weight: bold;
+        }
+        
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        
+        tr:hover {
+            background-color: #f0f0f0;
+        }
+        
+        .code-block {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 15px;
+            border-radius: 4px;
+            overflow-x: auto;
+            font-family: 'Courier New', monospace;
+            margin: 15px 0;
+        }
+        
+        ul, ol {
+            margin: 15px 0 15px 30px;
+        }
+        
+        li {
+            margin-bottom: 8px;
+        }
+        
+        .overview {
+            background: #ecf0f1;
+            border-left: 4px solid #3498db;
+            padding: 15px;
+            border-radius: 4px;
+            margin: 20px 0;
+        }
+        
+        .component-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        .component-card {
+            background: #fff;
+            border: 2px solid #ecf0f1;
+            border-radius: 6px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .component-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .component-card h4 {
+            color: #3498db;
+            margin-bottom: 10px;
+        }
+        
+        footer {
+            margin-top: 50px;
+            padding-top: 20px;
+            border-top: 1px solid #ecf0f1;
+            color: #7f8c8d;
+            text-align: center;
+            font-size: 0.9em;
+        }
+        
+        .toc {
+            background: #ecf0f1;
+            padding: 20px;
+            border-radius: 6px;
+            margin: 20px 0;
+        }
+        
+        .toc h3 {
+            margin-top: 0;
+            color: #2c3e50;
+        }
+        
+        .toc ul {
+            list-style-type: none;
+            margin: 0;
+        }
+        
+        .toc li {
+            margin: 8px 0;
+        }
+        
+        .toc a {
+            color: #3498db;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        
+        .toc a:hover {
+            color: #2980b9;
+            text-decoration: underline;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 1.8em;
+            }
+            
+            h2 {
+                font-size: 1.4em;
+            }
+            
+            .component-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .highlight {
+            background: #fff3cd;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-weight: 500;
+        }
+    </style>
+    <script>
+        mermaid.initialize({ startOnLoad: true, theme: 'default' });
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1>🎮 Pygame Square Simulation</h1>
+        <p class="subtitle">Architecture Documentation</p>
+        
+        <div class="overview">
+            <h3>Project Overview</h3>
+            <p>This is a pygame-based simulation featuring dynamic squares with AI-driven behavior. Squares interact through fleeing and chasing mechanics, creating emergent gameplay where smaller squares flee from larger ones and larger squares hunt smaller targets.</p>
+        </div>
+        
+        <!-- Table of Contents -->
+        <div class="toc">
+            <h3>📑 Table of Contents</h3>
+            <ul>
+                <li><a href="#system-architecture">1. System Architecture Diagram</a></li>
+                <li><a href="#class-hierarchy">2. Class & Function Hierarchy</a></li>
+                <li><a href="#data-flow">3. Data Flow Diagram</a></li>
+                <li><a href="#game-loop">4. Game Loop Sequence Diagram</a></li>
+                <li><a href="#components">5. Component Descriptions</a></li>
+                <li><a href="#ai-behavior">6. AI Behavior Details</a></li>
+                <li><a href="#physics">7. Physics System</a></li>
+                <li><a href="#data-structures">8. Data Structures</a></li>
+                <li><a href="#design-patterns">9. Key Design Patterns</a></li>
+                <li><a href="#performance">10. Performance Characteristics</a></li>
+            </ul>
+        </div>
+        
+        <!-- 1. System Architecture Diagram -->
+        <h2 id="system-architecture">1. System Architecture Diagram</h2>
+        <div class="diagram-section">
+            <p><strong>Overview:</strong> High-level view of all major subsystems and their relationships.</p>
+            <div class="mermaid">
+graph TB
+    subgraph "Pygame Framework"
+        PG["pygame (Core Library)"]
+    end
+    
+    subgraph "Game Engine"
+        GL["Game Loop<br/>(Main Event Loop)"]
+        EM["Event Manager<br/>(Input Handling)"]
+        SR["Scene Renderer<br/>(Display Update)"]
+    end
+    
+    subgraph "Simulation System"
+        SQ["Square Entity<br/>(Movable Objects)"]
+        AI["AI Behavior System<br/>(Flee & Chase)"]
+        PHY["Physics Engine<br/>(Movement & Collision)"]
+    end
+    
+    subgraph "Game State"
+        SL["Square List<br/>(Entity Collection)"]
+        CFG["Configuration<br/>(Constants)"]
+    end
+    
+    PG --> GL
+    GL --> EM
+    GL --> PHY
+    GL --> AI
+    GL --> SR
+    
+    EM --> SL
+    PHY --> SQ
+    AI --> SQ
+    SR --> SQ
+    
+    SQ --> CFG
+    SL --> CFG
+    PHY --> CFG
+    AI --> CFG
+            </div>
+        </div>
+        
+        <!-- 2. Class Hierarchy -->
+        <h2 id="class-hierarchy">2. Class & Function Hierarchy</h2>
+        <div class="diagram-section">
+            <p><strong>Overview:</strong> Class structure and relationships within the system.</p>
+            <div class="mermaid">
+classDiagram
+    class Square {
+        -int size
+        -float x
+        -float y
+        -float dx
+        -float dy
+        -Tuple color
+        -float max_speed
+        -float life
+        
+        +reset() void
+        +move(dt: float) void
+        +flee(all_squares: List, dt: float) void
+        +chasing(all_squares: List, dt: float) void
+        +update_life(dt: float) void
+        +draw(surface: pygame.Surface) void
+    }
+    
+    class "Game State" {
+        -List~Square~ squares
+        -pygame.Surface screen
+        -pygame.time.Clock clock
+        -bool running
+    }
+    
+    Game_State --> Square : "contains 15 instances"
+            </div>
+        </div>
+        
+        <!-- 3. Data Flow Diagram -->
+        <h2 id="data-flow">3. Data Flow Diagram</h2>
+        <div class="diagram-section">
+            <p><strong>Overview:</strong> How data flows through the simulation each frame.</p>
+            <div class="mermaid">
+flowchart LR
+    subgraph "Input Phase"
+        I["Event Input"]
+    end
+    
+    subgraph "AI & Physics Phase"
+        F["Flee Behavior"]
+        C["Chase Behavior"]
+        M["Move Physics"]
+        L["Life Update"]
+    end
+    
+    subgraph "Rendering Phase"
+        D["Draw Squares"]
+        DF["Display Flip"]
+    end
+    
+    subgraph "State"
+        SQ["Square Data<br/>(position, velocity,<br/>size, color, life)"]
+    end
+    
+    I --> F
+    F --> SQ
+    SQ --> C
+    C --> SQ
+    SQ --> M
+    M --> SQ
+    SQ --> L
+    L --> SQ
+    SQ --> D
+    D --> DF
+    DF --> I
+            </div>
+        </div>
+        
+        <!-- 4. Game Loop Sequence -->
+        <h2 id="game-loop">4. Game Loop Sequence Diagram</h2>
+        <div class="diagram-section">
+            <p><strong>Overview:</strong> Detailed sequence of operations in each game frame.</p>
+            <div class="mermaid">
+sequenceDiagram
+    participant GL as "Game Loop"
+    participant EM as "Event Manager"
+    participant AI as "AI System"
+    participant PHY as "Physics Engine"
+    participant REN as "Renderer"
+    
+    loop Each Frame (72 FPS)
+        GL->>EM: Check events
+        EM-->>GL: Event data
+        
+        GL->>AI: Apply flee behavior
+        AI->>AI: Check square distances
+        AI-->>GL: Velocity adjustments
+        
+        GL->>AI: Apply chase behavior
+        AI->>AI: Find closest target
+        AI-->>GL: Velocity adjustments
+        
+        GL->>PHY: Move all squares
+        PHY->>PHY: Update positions
+        PHY->>PHY: Bounce off walls
+        PHY-->>GL: Updated positions
+        
+        GL->>PHY: Update life & reset
+        PHY->>PHY: Decrement life timer
+        PHY-->>GL: Reset dead squares
+        
+        GL->>REN: Draw all squares
+        REN->>REN: Clear screen
+        REN->>REN: Render each square
+        REN-->>GL: Done
+        
+        GL->>REN: Flip display
+        REN-->>GL: Display updated
+    end
+            </div>
+        </div>
+        
+        <!-- 5. Component Descriptions -->
+        <h2 id="components">5. Component Descriptions</h2>
+        
+        <h3>5.1 Square Class</h3>
+        <p><strong>Purpose:</strong> Represents individual entities in the simulation.</p>
+        
+        <h4>Key Attributes:</h4>
+        <ul>
+            <li><span class="highlight">Position:</span> x, y (pixel coordinates)</li>
+            <li><span class="highlight">Velocity:</span> dx, dy (pixels per second)</li>
+            <li><span class="highlight">Size:</span> Random value between MIN_SIZE (10) and MAX_SIZE (50)</li>
+            <li><span class="highlight">Color:</span> Random RGB tuple</li>
+            <li><span class="highlight">Speed:</span> Inverse relationship with size (smaller squares are faster)</li>
+            <li><span class="highlight">Life:</span> Countdown timer (5-15 seconds) before reset</li>
+        </ul>
+        
+        <h4>Key Methods:</h4>
+        <table>
+            <tr>
+                <th>Method</th>
+                <th>Purpose</th>
+            </tr>
+            <tr>
+                <td><code>reset()</code></td>
+                <td>Reinitialize square with random properties</td>
+            </tr>
+            <tr>
+                <td><code>move(dt)</code></td>
+                <td>Update position, handle wall bouncing, apply speed limits</td>
+            </tr>
+            <tr>
+                <td><code>flee(all_squares, dt)</code></td>
+                <td>Flee from larger squares within 200px radius</td>
+            </tr>
+            <tr>
+                <td><code>chasing(all_squares, dt)</code></td>
+                <td>Chase smaller squares within 200px radius</td>
+            </tr>
+            <tr>
+                <td><code>update_life(dt)</code></td>
+                <td>Decrease life counter; reset if expired</td>
+            </tr>
+            <tr>
+                <td><code>draw(surface)</code></td>
+                <td>Render square to screen</td>
+            </tr>
+        </table>
+        
+        <h3>5.2 Game Loop</h3>
+        <p><strong>Purpose:</strong> Main execution pipeline that drives the simulation.</p>
+        
+        <h4>Flow:</h4>
+        <ol>
+            <li><strong>Event Handling</strong> → Capture quit events</li>
+            <li><strong>AI Phase</strong> → Apply flee & chase behaviors to all squares</li>
+            <li><strong>Physics Phase</strong> → Update positions and detect wall collisions</li>
+            <li><strong>Life Management</strong> → Age squares and reset expired ones</li>
+            <li><strong>Rendering</strong> → Clear screen, draw all squares, update display</li>
+            <li><strong>Timing</strong> → Frame-rate control at 72 FPS</li>
+        </ol>
+        
+        <h3>5.3 Configuration Constants</h3>
+        <p><strong>Purpose:</strong> Define simulation parameters.</p>
+        
+        <table>
+            <tr>
+                <th>Constant</th>
+                <th>Value</th>
+                <th>Purpose</th>
+            </tr>
+            <tr>
+                <td><code>MIN_SIZE</code></td>
+                <td>10 px</td>
+                <td>Minimum square dimension</td>
+            </tr>
+            <tr>
+                <td><code>MAX_SIZE</code></td>
+                <td>50 px</td>
+                <td>Maximum square dimension</td>
+            </tr>
+            <tr>
+                <td><code>MAX_SPEED</code></td>
+                <td>200 px/s</td>
+                <td>Base speed for smallest squares</td>
+            </tr>
+            <tr>
+                <td><code>WIDTH</code></td>
+                <td>1080 px</td>
+                <td>Screen width</td>
+            </tr>
+            <tr>
+                <td><code>HEIGHT</code></td>
+                <td>920 px</td>
+                <td>Screen height</td>
+            </tr>
+        </table>
+        
+        <!-- 6. AI Behavior -->
+        <h2 id="ai-behavior">6. AI Behavior Details</h2>
+        
+        <div class="component-grid">
+            <div class="component-card">
+                <h4>🏃 Flee Behavior</h4>
+                <ul>
+                    <li>Triggers when a larger square is within 200px radius</li>
+                    <li>Applies repulsive force proportional to proximity</li>
+                    <li>Smaller squares always flee from larger ones</li>
+                    <li><strong>Force:</strong> strength = (200 - distance) / 200</li>
+                    <li><strong>Acceleration:</strong> 500 × strength px/s²</li>
+                </ul>
+            </div>
+            
+            <div class="component-card">
+                <h4>🎯 Chase Behavior</h4>
+                <ul>
+                    <li>Finds the closest smaller square within 200px radius</li>
+                    <li>Applies attractive force toward target</li>
+                    <li>Only triggers if a valid target exists</li>
+                    <li><strong>Force:</strong> strength = (200 - distance) / 200</li>
+                    <li><strong>Acceleration:</strong> 600 × strength px/s² (stronger than flee)</li>
+                </ul>
+            </div>
+        </div>
+        
+        <!-- 7. Physics System -->
+        <h2 id="physics">7. Physics System</h2>
+        
+        <h3>Movement</h3>
+        <ol>
+            <li>Random 2% chance per frame to rotate velocity vector (-0.2 to +0.2 radians)</li>
+            <li>Speed is capped at square's <code>max_speed</code></li>
+            <li>Position updated: <code>position += velocity × dt</code></li>
+            <li>Delta time (dt) enables frame-rate independence</li>
+        </ol>
+        
+        <h3>Collision (Wall Bouncing)</h3>
+        <ul>
+            <li><strong>Left/Right:</strong> If x &lt; 0 or x &gt; WIDTH, clamp position and reverse dx</li>
+            <li><strong>Top/Bottom:</strong> If y &lt; 0 or y &gt; HEIGHT, clamp position and reverse dy</li>
+            <li><strong>Inter-square:</strong> No collisions; only behavioral interaction</li>
+        </ul>
+        
+        <h3>Speed Regulation</h3>
+        <p>Smaller squares have proportionally higher max speeds:</p>
+        <div class="code-block">
+max_speed = MAX_SPEED × (MAX_SIZE - size) / (MAX_SIZE - MIN_SIZE + 1)
+        </div>
+        <p>This ensures balanced gameplay dynamics.</p>
+        
+        <!-- 8. Data Structures -->
+        <h2 id="data-structures">8. Data Structures</h2>
+        
+        <h3>Square List</h3>
+        <div class="code-block">
+squares: List[Square]
+- Contains exactly 15 Square instances
+- Persists throughout game runtime
+- Each square is independent but interacts with others via AI
+        </div>
+        
+        <h3>Screen Surface</h3>
+        <div class="code-block">
+screen: pygame.Surface
+- Size: 1080x920 pixels
+- Color: Dark gray (30, 30, 30)
+- Updated every frame (72 FPS)
+        </div>
+        
+        <!-- 9. Design Patterns -->
+        <h2 id="design-patterns">9. Key Design Patterns</h2>
+        
+        <table>
+            <tr>
+                <th>Pattern</th>
+                <th>Implementation</th>
+            </tr>
+            <tr>
+                <td><strong>Entity System</strong></td>
+                <td>All game objects (squares) follow the same interface</td>
+            </tr>
+            <tr>
+                <td><strong>Separation of Concerns</strong></td>
+                <td>AI, physics, and rendering are logically separate</td>
+            </tr>
+            <tr>
+                <td><strong>Frame-Rate Independence</strong></td>
+                <td>Uses delta time (dt) for physics calculations</td>
+            </tr>
+            <tr>
+                <td><strong>Behavioral Interaction</strong></td>
+                <td>Emergent behavior from simple local rules</td>
+            </tr>
+            <tr>
+                <td><strong>Resource Pooling</strong></td>
+                <td>Squares reset and reuse memory rather than creating/destroying</td>
+            </tr>
+        </table>
+        
+        <!-- 10. Performance -->
+        <h2 id="performance">10. Performance Characteristics</h2>
+        
+        <table>
+            <tr>
+                <th>Metric</th>
+                <th>Value</th>
+            </tr>
+            <tr>
+                <td><strong>Frame Rate</strong></td>
+                <td>72 FPS target</td>
+            </tr>
+            <tr>
+                <td><strong>Entity Count</strong></td>
+                <td>15 squares (fixed)</td>
+            </tr>
+            <tr>
+                <td><strong>Update Complexity (AI)</strong></td>
+                <td>O(n²) – each square checks all others</td>
+            </tr>
+            <tr>
+                <td><strong>Rendering Complexity</strong></td>
+                <td>O(n) – linear in entity count</td>
+            </tr>
+            <tr>
+                <td><strong>Memory Usage</strong></td>
+                <td>Minimal; no allocation/deallocation per frame</td>
+            </tr>
+        </table>
+        
+        <!-- Summary -->
+        <h2>Summary</h2>
+        <div class="overview">
+            <p>This pygame project implements a lightweight particle system with emergent AI behaviors. The architecture is straightforward:</p>
+            <ul>
+                <li><strong>Single Entity Class</strong> – <code>Square</code> manages state and behavior</li>
+                <li><strong>Main Game Loop</strong> – Orchestrates updates and rendering</li>
+                <li><strong>AI Layer</strong> – Uses simple distance-based forces for interaction</li>
+                <li><strong>Physics Layer</strong> – Handles movement and boundary conditions</li>
+                <li><strong>Rendering Layer</strong> – Draws the current state every frame</li>
+            </ul>
+            <p>The design prioritizes <strong>simplicity</strong> while demonstrating game loop architecture, physics integration, and AI decision-making.</p>
+        </div>
+        
+        <footer>
+            <p>Generated: April 27, 2026</p>
+            <p>Architecture Documentation for Pygame Square Simulation</p>
+        </footer>
+    </div>
+</body>
+</html>

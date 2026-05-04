@@ -1,0 +1,1274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pygame Squares Simulation - Study Tool</title>
+    <!-- STUDY_TOOL_TEMPLATE_VERSION: 2.0 -->
+    <style>
+        :root {
+            --bg: #0f1419;
+            --surface: #1a1f2e;
+            --surface-alt: #242b3d;
+            --text: #e8eaed;
+            --text-muted: #9ca3af;
+            --accent: #4f46e5;
+            --accent-light: #6366f1;
+            --success: #10b981;
+            --error: #ef4444;
+            --radius: 12px;
+            --radius-lg: 16px;
+            --shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow-x: hidden;
+        }
+
+        body {
+            font-family: "Avenir Next", "Segoe UI", "Trebuchet MS", sans-serif;
+            background: linear-gradient(135deg, var(--bg) 0%, #0d1117 100%);
+            background-attachment: fixed;
+            color: var(--text);
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        #app {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* ===== HEADER ===== */
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px 0;
+            background: linear-gradient(120deg, var(--accent) 0%, var(--accent-light) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            margin-bottom: 20px;
+        }
+
+        /* ===== SECTIONS ===== */
+        .section {
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        /* ===== STUDY SUMMARY ===== */
+        #study-summary {
+            background: var(--surface);
+            border: 1px solid var(--surface-alt);
+            padding: 25px;
+            border-radius: var(--radius-lg);
+            margin-bottom: 30px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        #study-summary h2 {
+            color: var(--accent);
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+        }
+
+        #study-summary p {
+            color: var(--text-muted);
+            margin-bottom: 15px;
+            line-height: 1.7;
+        }
+
+        .themes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .theme-badge {
+            background: var(--surface-alt);
+            border: 1px solid var(--accent);
+            color: var(--accent);
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            text-align: center;
+        }
+
+        /* ===== MODE SWITCHER ===== */
+        #mode-switcher {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .mode-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .mode-btn {
+            padding: 12px 30px;
+            border: 2px solid var(--surface-alt);
+            background: transparent;
+            color: var(--text);
+            border-radius: var(--radius);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .mode-btn:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+            transform: translateY(-2px);
+        }
+
+        .mode-btn.active {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: white;
+            box-shadow: var(--shadow);
+        }
+
+        /* ===== FLASHCARDS ===== */
+        #flashcard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .flashcard {
+            height: 350px;
+            cursor: pointer;
+            perspective: 1000px;
+            border-radius: var(--radius-lg);
+            background: var(--surface);
+            border: 1px solid var(--surface-alt);
+            padding: 0;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .flashcard:hover {
+            border-color: var(--accent);
+            box-shadow: var(--shadow);
+            transform: translateY(-4px);
+        }
+
+        .flashcard:focus {
+            outline: 2px solid var(--accent);
+            outline-offset: 2px;
+        }
+
+        .flashcard-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+        }
+
+        .flashcard.is-flipped .flashcard-inner {
+            transform: rotateY(180deg);
+        }
+
+        .flashcard-front, .flashcard-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 25px;
+            text-align: center;
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+        }
+
+        .flashcard-front {
+            background: linear-gradient(135deg, var(--surface) 0%, var(--surface-alt) 100%);
+            border: 1px solid var(--accent);
+        }
+
+        .flashcard-back {
+            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-light) 100%);
+            color: white;
+            transform: rotateY(180deg);
+        }
+
+        .flashcard-front h3 {
+            color: var(--accent);
+            font-size: 1.3rem;
+            margin-bottom: 10px;
+        }
+
+        .flashcard-front .topic {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid var(--surface-alt);
+        }
+
+        .flashcard-back p {
+            font-size: 1rem;
+            line-height: 1.6;
+            max-height: 100%;
+            overflow-y: auto;
+        }
+
+        .card-hint {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            position: absolute;
+            bottom: 15px;
+            right: 15px;
+            opacity: 0.7;
+        }
+
+        /* ===== QUIZ ===== */
+        #quiz-content {
+            background: var(--surface);
+            border: 1px solid var(--surface-alt);
+            padding: 30px;
+            border-radius: var(--radius-lg);
+            margin-bottom: 20px;
+            min-height: 400px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .question-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--surface-alt);
+        }
+
+        .question-number {
+            color: var(--accent);
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .question-progress {
+            background: var(--surface-alt);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .question-title {
+            color: var(--text);
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin-bottom: 25px;
+        }
+
+        .difficulty-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .difficulty-easy {
+            background: rgba(16, 185, 129, 0.2);
+            color: #10b981;
+        }
+
+        .difficulty-medium {
+            background: rgba(244, 114, 49, 0.2);
+            color: #f47231;
+        }
+
+        .difficulty-hard {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+        }
+
+        .code-ref {
+            background: var(--surface-alt);
+            border-left: 3px solid var(--accent);
+            padding: 10px 15px;
+            margin: 15px 0;
+            border-radius: 4px;
+            font-family: "Courier New", monospace;
+            font-size: 0.85rem;
+            color: #9ece6a;
+            overflow-x: auto;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin: 20px 0;
+        }
+
+        .option {
+            background: var(--surface-alt);
+            border: 2px solid transparent;
+            padding: 15px;
+            border-radius: var(--radius);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+            padding-left: 45px;
+        }
+
+        .option input[type="radio"] {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            width: 18px;
+            height: 18px;
+        }
+
+        .option:hover {
+            border-color: var(--accent);
+            background: rgba(79, 70, 229, 0.1);
+        }
+
+        .option.selected {
+            border-color: var(--accent);
+            background: rgba(79, 70, 229, 0.2);
+        }
+
+        .option.correct {
+            border-color: var(--success);
+            background: rgba(16, 185, 129, 0.1);
+        }
+
+        .option.incorrect {
+            border-color: var(--error);
+            background: rgba(239, 68, 68, 0.1);
+        }
+
+        .quiz-nav {
+            display: flex;
+            gap: 10px;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 30px;
+            background: var(--surface);
+            border: 1px solid var(--surface-alt);
+            border-radius: var(--radius-lg);
+            margin-bottom: 20px;
+        }
+
+        .nav-btn {
+            padding: 10px 20px;
+            background: var(--surface-alt);
+            border: 1px solid transparent;
+            color: var(--text);
+            border-radius: var(--radius);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-weight: 600;
+        }
+
+        .nav-btn:hover:not(:disabled) {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        .nav-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .submit-btn {
+            padding: 12px 30px;
+            background: var(--accent);
+            border: none;
+            color: white;
+            border-radius: var(--radius);
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.2s ease;
+        }
+
+        .submit-btn:hover {
+            background: var(--accent-light);
+            box-shadow: var(--shadow);
+            transform: translateY(-2px);
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        #quiz-results {
+            background: var(--surface);
+            border: 1px solid var(--surface-alt);
+            padding: 30px;
+            border-radius: var(--radius-lg);
+            display: none;
+            animation: slideUp 0.4s ease;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .results-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .score-display {
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--accent);
+            margin: 20px 0;
+        }
+
+        .score-message {
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+            color: var(--text);
+        }
+
+        .results-breakdown {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin: 30px 0;
+        }
+
+        .breakdown-item {
+            background: var(--surface-alt);
+            padding: 20px;
+            border-radius: var(--radius);
+            text-align: center;
+        }
+
+        .breakdown-label {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+        }
+
+        .breakdown-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--accent);
+        }
+
+        .results-detail {
+            margin-top: 30px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .result-item {
+            background: var(--surface-alt);
+            padding: 20px;
+            border-radius: var(--radius);
+            margin-bottom: 15px;
+            border-left: 4px solid var(--surface-alt);
+        }
+
+        .result-item.correct {
+            border-left-color: var(--success);
+        }
+
+        .result-item.incorrect {
+            border-left-color: var(--error);
+        }
+
+        .result-question {
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .result-answer {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+
+        .result-explanation {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            padding-top: 10px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            margin-top: 10px;
+        }
+
+        .retry-btn {
+            margin-top: 30px;
+            padding: 15px 40px;
+            background: var(--accent);
+            border: none;
+            color: white;
+            border-radius: var(--radius);
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.2s ease;
+            width: 100%;
+        }
+
+        .retry-btn:hover {
+            background: var(--accent-light);
+            box-shadow: var(--shadow);
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8rem;
+            }
+
+            #flashcard-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .flashcard {
+                height: 280px;
+            }
+
+            .quiz-nav {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .nav-btn {
+                width: 100%;
+            }
+
+            .submit-btn {
+                width: 100%;
+            }
+
+            .mode-buttons {
+                flex-direction: column;
+            }
+
+            .mode-btn {
+                width: 100%;
+            }
+
+            .score-display {
+                font-size: 2.5rem;
+            }
+
+            .results-breakdown {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* ===== SCROLLBAR ===== */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--surface-alt);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--accent);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--accent-light);
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <!-- ===== HEADER ===== -->
+        <div class="header">
+            <h1>🎮 Pygame Squares Study Tool</h1>
+            <p>Master the simulation system: physics, AI, and game loops</p>
+        </div>
+
+        <!-- ===== STUDY SUMMARY ===== -->
+        <section id="study-summary" class="section active">
+            <h2>📚 Study Overview</h2>
+            <p>This interactive study tool covers the core concepts of the Pygame Squares Simulation system. The project demonstrates fundamental game development principles including physics-based movement, AI behaviors (fleeing and chasing), delta-time integration, and event-driven game loops.</p>
+            <p><strong>Key Technical Themes:</strong></p>
+            <div class="themes-grid">
+                <div class="theme-badge">Physics & Movement</div>
+                <div class="theme-badge">Collision Response</div>
+                <div class="theme-badge">AI Behaviors</div>
+                <div class="theme-badge">Distance Calculations</div>
+                <div class="theme-badge">Delta Time Integration</div>
+                <div class="theme-badge">Life/Spawn Mechanics</div>
+                <div class="theme-badge">Type Hints & Design</div>
+                <div class="theme-badge">Game Loop Architecture</div>
+            </div>
+        </section>
+
+        <!-- ===== MODE SWITCHER ===== -->
+        <section id="mode-switcher" class="section active">
+            <div class="mode-buttons">
+                <button class="mode-btn active" data-mode="flashcards">📇 Flashcards</button>
+                <button class="mode-btn" data-mode="quiz">✏️ Quiz</button>
+            </div>
+        </section>
+
+        <!-- ===== FLASHCARDS ===== -->
+        <section id="flashcards" class="section active">
+            <div id="flashcard-grid"></div>
+        </section>
+
+        <!-- ===== QUIZ ===== -->
+        <section id="quiz" class="section">
+            <div id="quiz-content"></div>
+            <div class="quiz-nav"></div>
+            <div id="quiz-results"></div>
+        </section>
+    </div>
+
+    <script>
+        // DOM Validation
+        function validateDOM() {
+            const required = [
+                { selector: '#flashcards', type: 'id' },
+                { selector: '#quiz', type: 'id' },
+                { selector: '#quiz-content', type: 'id' },
+                { selector: '.quiz-nav', type: 'class' },
+                { selector: '#quiz-results', type: 'id' },
+                { selector: '#flashcard-grid', type: 'id' },
+                { selector: '#mode-switcher', type: 'id' },
+                { selector: '#study-summary', type: 'id' }
+            ];
+
+            const missing = required.filter(el => !document.querySelector(el.selector));
+            if (missing.length > 0) {
+                console.error('MISSING DOM ELEMENTS:', missing.map(m => m.selector));
+                throw new Error(`Missing required DOM elements: ${missing.map(m => m.selector).join(', ')}`);
+            }
+            console.log('✓ DOM validation passed');
+        }
+
+        // ===== DATA: FLASHCARDS =====
+        const flashcards = [
+            {
+                topic: "Square Class",
+                front: "What is the purpose of the <code>reset()</code> method?",
+                back: "Re-initializes all Square attributes (size, position, velocity, color, life) with random values. Called during initialization and whenever a square's life reaches zero."
+            },
+            {
+                topic: "Physics",
+                front: "How does <code>max_speed</code> relate to square size?",
+                back: "Smaller squares move faster. Calculated as: <code>max_speed = MAX_SPEED × (MAX_SIZE - size) / (MAX_SIZE - MIN_SIZE + 1)</code>. This creates a predator-prey dynamic."
+            },
+            {
+                topic: "Movement",
+                front: "What does the <code>speed = math.hypot(self.dx, self.dy)</code> line in <code>move()</code> do?",
+                back: "Calculates the magnitude of the velocity vector. Used to clamp the speed: if it exceeds <code>max_speed</code>, the velocity is normalized and scaled back down."
+            },
+            {
+                topic: "Collision",
+                front: "How does the code detect wall collisions?",
+                back: "Checks if x/y position is outside bounds (x < 0, x > WIDTH - size, y < 0, y > HEIGHT - size). When detected, position is clamped and the corresponding velocity component is negated."
+            },
+            {
+                topic: "Steering",
+                front: "What happens with probability 0.02 each frame in <code>move()</code>?",
+                back: "A random steering angle is applied using 2D rotation: <code>new_dx = dx × cos(angle) - dy × sin(angle)</code>. This creates unpredictable wandering behavior."
+            },
+            {
+                topic: "AI - Fleeing",
+                front: "In the <code>flee()</code> method, why check <code>if other.size > self.size</code>?",
+                back: "Only larger squares are threats. Smaller or equal-sized squares don't cause fleeing behavior. This implements predator-prey hierarchy."
+            },
+            {
+                topic: "AI - Fleeing",
+                front: "How does fleeing force decrease with distance in <code>flee()</code>?",
+                back: "Uses a strength factor: <code>strength = (200 - dist) / 200</code>. At 200 pixels away, strength = 0. Closer = stronger repulsion. Creates a 200-pixel threat zone."
+            },
+            {
+                topic: "AI - Chasing",
+                front: "What is the purpose of tracking <code>closest_dist</code> in <code>chasing()</code>?",
+                back: "Finds the nearest prey square. Only squares smaller than self are eligible. The closest one is pursued with acceleration: <code>dx/dy += direction × 600 × strength × dt</code>."
+            },
+            {
+                topic: "Distance Calculation",
+                front: "Why use <code>math.hypot()</code> instead of <code>math.sqrt(dx² + dy²)</code>?",
+                back: "<code>hypot()</code> is more numerically stable and readable. Both calculate Euclidean distance, but hypot handles edge cases better and conveys intent more clearly."
+            },
+            {
+                topic: "Life Mechanics",
+                front: "What happens in <code>update_life()</code> when life <= 0?",
+                back: "<code>reset()</code> is called, giving the square new random attributes. This creates continuous respawning instead of permanent removal."
+            },
+            {
+                topic: "Game Loop",
+                front: "What does <code>dt = clock.tick(72) / 1000.0</code> provide?",
+                back: "Caps the frame rate at 72 FPS and calculates delta time (seconds since last frame). Enables frame-rate-independent physics integration."
+            },
+            {
+                topic: "Type Hints",
+                front: "What do the type hints <code>def move(self, dt: float) -> None</code> indicate?",
+                back: "<code>dt</code> parameter must be float (delta time), return type is None (void). Improves code clarity and enables static type checking."
+            },
+            {
+                topic: "Design Pattern",
+                front: "Why are <code>move()</code>, <code>flee()</code>, and <code>chasing()</code> separate methods instead of one <code>update()</code>?",
+                back: "Separation of concerns: movement is physics, fleeing/chasing are AI behaviors. Allows independent testing, reordering, and disable-ability. The main loop calls them in sequence: flee → chase → move."
+            },
+            {
+                topic: "Color & Rendering",
+                front: "How is each square's color generated in <code>reset()</code>?",
+                back: "Three random integers from 50–255 create an RGB tuple: <code>(random.randint(50, 255), ...)</code>. Avoids very dark colors (< 50) for visibility against dark background."
+            },
+            {
+                topic: "Vector Math",
+                front: "In <code>flee()</code> and <code>chasing()</code>, why normalize <code>dx, dy</code> by dividing by <code>dist</code>?",
+                back: "Converts displacement into a unit direction vector. Ensures the subsequent acceleration is purely directional, independent of initial distance. Strength factor then controls magnitude."
+            }
+        ];
+
+        // ===== DATA: QUIZ QUESTIONS =====
+        const quizData = [
+            {
+                id: "q-0",
+                question: "In the Square class, when <code>random.random() < 0.02</code> triggers in <code>move()</code>, what mathematical transformation is applied to the velocity vector?",
+                difficulty: "medium",
+                type: "multiple-choice",
+                options: [
+                    { text: "A 2D rotation using cos and sin: <code>new_dx = dx × cos(a) - dy × sin(a)</code>", correct: true },
+                    { text: "Direct scaling: <code>dx *= random_factor</code>", correct: false },
+                    { text: "Random replacement with new velocity values", correct: false },
+                    { text: "Magnitude inversion: <code>dx, dy = -dy, -dx</code>", correct: false }
+                ],
+                explanation: "A 2D rotation matrix is applied with a random angle (±0.2 radians). This implements steering via rotation, creating the unpredictable wandering effect.",
+                codeRef: "lines 48-56 in main.py"
+            },
+            {
+                id: "q-1",
+                question: "The <code>flee()</code> method only processes larger squares as threats. What is the consequence if a smaller square encounters another square of equal size?",
+                difficulty: "hard",
+                type: "multiple-choice",
+                options: [
+                    { text: "They both flee from each other (mutual repulsion)", correct: false },
+                    { text: "The smaller square ignores it (no fleeing occurs)", correct: true },
+                    { text: "The smaller square attacks it", correct: false },
+                    { text: "They merge into a larger square", correct: false }
+                ],
+                explanation: "Only <code>other.size > self.size</code> triggers fleeing. Equal-sized squares pose no threat, so fleeing is skipped. This creates a strict size-based hierarchy.",
+                codeRef: "line 84 in main.py"
+            },
+            {
+                id: "q-2",
+                question: "How is the speed clamping in the <code>move()</code> method achieved after steering?",
+                difficulty: "medium",
+                type: "multiple-choice",
+                options: [
+                    { text: "<code>factor = min(max_speed, speed) / speed; dx, dy *= factor</code>", correct: true },
+                    { text: "<code>dx = max_speed; dy = max_speed</code>", correct: false },
+                    { text: "<code>if speed > max_speed: dx = max_speed; dy = max_speed</code>", correct: false },
+                    { text: "No clamping—speed is unlimited", correct: false }
+                ],
+                explanation: "The factor normalizes the velocity to magnitude max_speed without changing direction. This preserves steering while respecting the speed limit.",
+                codeRef: "lines 57-62 in main.py"
+            },
+            {
+                id: "q-3",
+                question: "In <code>chasing()</code>, why is the variable <code>closest_dist</code> initialized to <code>float('inf')</code>?",
+                difficulty: "easy",
+                type: "multiple-choice",
+                options: [
+                    { text: "To ensure any real distance found is smaller, enabling min() logic", correct: true },
+                    { text: "To prevent division by zero", correct: false },
+                    { text: "To represent 'no valid target'", correct: false },
+                    { text: "To match Python's infinity constant", correct: false }
+                ],
+                explanation: "Initializing to infinity guarantees that the first valid target comparison will be true (<code>dist < float('inf')</code>). This is a standard pattern for tracking minimums.",
+                codeRef: "line 101 in main.py"
+            },
+            {
+                id: "q-4",
+                question: "What is the relationship between <code>max_speed</code> and <code>size</code> in terms of gameplay impact?",
+                difficulty: "hard",
+                type: "multiple-choice",
+                options: [
+                    { text: "Larger squares move faster, creating a dominant predator advantage", correct: false },
+                    { text: "Smaller squares move faster, allowing them to escape larger predators", correct: true },
+                    { text: "Size and speed are unrelated", correct: false },
+                    { text: "All squares have identical max speeds regardless of size", correct: false }
+                ],
+                explanation: "Small squares receive higher max_speed (calculated as <code>MAX_SPEED × (MAX_SIZE - size) / ...</code>). This gives them a survival advantage through speed, balancing the predator-prey dynamic.",
+                codeRef: "lines 27-28 in main.py"
+            },
+            {
+                id: "q-5",
+                question: "If a square exits the right boundary (<code>x > WIDTH - size</code>), which line executes and why?",
+                difficulty: "medium",
+                type: "multiple-choice",
+                options: [
+                    { text: "<code>self.x = WIDTH - self.size; self.dx *= -1</code> to clamp position and reverse velocity", correct: true },
+                    { text: "<code>self.reset()</code> to respawn the square", correct: false },
+                    { text: "The square is deleted from the list", correct: false },
+                    { text: "<code>self.x = 0</code> to wrap around", correct: false }
+                ],
+                explanation: "The position is clamped to the boundary, and dx is negated to reverse horizontal motion. This simulates a bounce-back response.",
+                codeRef: "lines 68-75 in main.py"
+            },
+            {
+                id: "q-6",
+                question: "In the main game loop, the order of method calls is: <code>flee() → chasing() → move()</code>. What would happen if <code>move()</code> was called before <code>flee()</code>?",
+                difficulty: "hard",
+                type: "multiple-choice",
+                options: [
+                    { text: "Fleeing impulses would be applied to the already-moved position, causing delayed reaction", correct: true },
+                    { text: "Fleeing would not work at all", correct: false },
+                    { text: "Movement would be faster", correct: false },
+                    { text: "There would be no observable difference", correct: false }
+                ],
+                explanation: "AI behaviors (flee, chase) accumulate velocity impulses, then move() integrates them. Reversing the order would compute behavior based on stale position data, creating a one-frame lag.",
+                codeRef: "lines 148-153 in main.py"
+            },
+            {
+                id: "q-7",
+                question: "A square has <code>life = 0.5</code> and <code>dt = 0.01</code> in <code>update_life()</code>. After this frame, will the square reset?",
+                difficulty: "easy",
+                type: "multiple-choice",
+                options: [
+                    { text: "No, because 0.5 - 0.01 = 0.49 (still > 0)", correct: true },
+                    { text: "Yes, because life is decreasing", correct: false },
+                    { text: "Yes, because 0.5 is less than 1", correct: false },
+                    { text: "No, life never reaches zero", correct: false }
+                ],
+                explanation: "Reset occurs only when <code>life <= 0</code>. Subtracting 0.01 from 0.5 yields 0.49, which is still positive. The square resets on the frame when the subtraction brings life to ≤ 0.",
+                codeRef: "lines 129-131 in main.py"
+            },
+            {
+                id: "q-8",
+                question: "In <code>flee()</code>, the force is calculated as <code>self.dx += dx × 500 × strength × dt</code>. Why include the <code>dt</code> factor?",
+                difficulty: "medium",
+                type: "multiple-choice",
+                options: [
+                    { text: "To make acceleration frame-rate independent (impulse scales with elapsed time)", correct: true },
+                    { text: "To slow down the flee speed", correct: false },
+                    { text: "To match the random steering angle", correct: false },
+                    { text: "No particular reason; it's arbitrary", correct: false }
+                ],
+                explanation: "Without dt, the acceleration impulse would be inconsistent across different frame rates. Multiplying by dt ensures that faster frames apply proportionally smaller impulses, keeping behavior stable.",
+                codeRef: "line 92 in main.py"
+            },
+            {
+                id: "q-9",
+                question: "What is the Big-O time complexity of the <code>flee()</code> method when there are N squares?",
+                difficulty: "hard",
+                type: "multiple-choice",
+                options: [
+                    { text: "O(N) – iterates once through all squares", correct: true },
+                    { text: "O(N²) – nested loops comparing all pairs", correct: false },
+                    { text: "O(1) – constant time operation", correct: false },
+                    { text: "O(log N) – binary search for threats", correct: false }
+                ],
+                explanation: "flee() loops once through all_squares to find larger threats. Single loop = O(N). If all squares were calling flee simultaneously with N squares total, the overall complexity would be O(N²), but each individual call is O(N).",
+                codeRef: "lines 82-93 in main.py"
+            },
+            {
+                id: "q-10",
+                question: "In <code>chasing()</code>, the condition <code>if other is self or other.size >= self.size: continue</code> serves which purpose?",
+                difficulty: "medium",
+                type: "multiple-choice",
+                options: [
+                    { text: "Skip self and squares that are equal/larger (only chase smaller prey)", correct: true },
+                    { text: "Improve performance by reducing loop iterations", correct: false },
+                    { text: "Prevent the square from chasing itself infinitely", correct: false },
+                    { text: "Both A and C", correct: false }
+                ],
+                explanation: "The condition enforces two rules: (1) ignore self-reference, (2) only pursue smaller targets. This creates a predatory hierarchy where bigger squares hunt smaller ones.",
+                codeRef: "line 104 in main.py"
+            },
+            {
+                id: "q-11",
+                question: "If <code>closest_dist</code> remains <code>float('inf')</code> after the loop in <code>chasing()</code>, what does the subsequent <code>if closest and 0 < closest_dist < 200</code> check ensure?",
+                difficulty: "hard",
+                type: "multiple-choice",
+                options: [
+                    { text: "If no valid target was found (closest is None), no chasing occurs", correct: true },
+                    { text: "The target must be exactly 200 pixels away", correct: false },
+                    { text: "Unlimited chasing range if a target exists", correct: false },
+                    { text: "Chasing only happens if closest_dist equals infinity", correct: false }
+                ],
+                explanation: "If no prey exists or all prey are out of range, <code>closest</code> remains None and the condition skips the acceleration. This prevents chasing phantoms.",
+                codeRef: "line 119 in main.py"
+            },
+            {
+                id: "q-12",
+                question: "Why is the 200-pixel threshold used in both <code>flee()</code> and <code>chasing()</code>?",
+                difficulty: "easy",
+                type: "multiple-choice",
+                options: [
+                    { text: "To create a consistent interaction distance that defines when behavior is triggered", correct: true },
+                    { text: "To match the screen width", correct: false },
+                    { text: "Arbitrary choice with no gameplay impact", correct: false },
+                    { text: "To prevent squares from ever touching", correct: false }
+                ],
+                explanation: "Both methods use 200 pixels as the threshold for activating behavior. This defines the 'perceptual range' for threats and prey, creating consistent interaction zones.",
+                codeRef: "lines 89 and 119 in main.py"
+            },
+            {
+                id: "q-13",
+                question: "The game loop calls <code>square.draw(screen)</code> once per square per frame. What would happen if draw() was called only once per 10 frames?",
+                difficulty: "medium",
+                type: "multiple-choice",
+                options: [
+                    { text: "Squares would not render correctly; visual output would be 9 frames stale", correct: true },
+                    { text: "Performance would improve without visual side effects", correct: false },
+                    { text: "Squares would move 10× faster", correct: false },
+                    { text: "The frame rate would remain at 72 FPS", correct: false }
+                ],
+                explanation: "draw() renders the square's current position each frame. Skipping frames means the screen displays outdated positions. The square has moved during those 9 frames but wasn't drawn.",
+                codeRef: "lines 133-134, 155 in main.py"
+            },
+            {
+                id: "q-14",
+                question: "What is the total Big-O complexity of one frame's update (flee + chase + move + draw for all N squares)?",
+                difficulty: "hard",
+                type: "multiple-choice",
+                options: [
+                    { text: "O(N²) – each square checks interactions with all others", correct: true },
+                    { text: "O(N) – linear pass through squares", correct: false },
+                    { text: "O(N log N) – logarithmic interaction cost", correct: false },
+                    { text: "O(1) – constant time regardless of square count", correct: false }
+                ],
+                explanation: "Each of N squares calls flee(), which loops through N others: O(N²). chasing() is also O(N²). move() and draw() are O(N) each. Dominated by O(N²) behavior interactions.",
+                codeRef: "lines 148-156 in main.py"
+            }
+        ];
+
+        // ===== STATE MANAGEMENT =====
+        let currentMode = 'flashcards';
+        let currentQuestionIndex = 0;
+        let quizAnswers = {};
+        let quizSubmitted = false;
+
+        // ===== INITIALIZE QUIZ DOM (Phase 1: Setup Only) =====
+        function initializeQuizDOM() {
+            const quizContent = document.getElementById('quiz-content');
+            if (!quizContent) {
+                console.error('MISSING: #quiz-content');
+                return;
+            }
+
+            // Pre-build all question containers
+            quizData.forEach((q, idx) => {
+                const questionDiv = document.createElement('div');
+                questionDiv.id = q.id;
+                questionDiv.className = 'question-container';
+                questionDiv.style.display = idx === 0 ? 'block' : 'none';
+                quizContent.appendChild(questionDiv);
+            });
+
+            console.log(`✓ Quiz DOM initialized with ${quizData.length} question containers`);
+        }
+
+        // ===== UPDATE QUIZ CONTENT (Phase 2: State Updates Only) =====
+        function updateQuizContent(qIndex) {
+            const quizContent = document.getElementById('quiz-content');
+            const question = quizData[qIndex];
+
+            // Hide all questions, show current
+            document.querySelectorAll('.question-container').forEach((q, idx) => {
+                q.style.display = idx === qIndex ? 'block' : 'none';
+            });
+
+            const questionDiv = document.getElementById(question.id);
+            if (!questionDiv) {
+                console.error(`MISSING: #${question.id}`);
+                return;
+            }
+
+            let difficultyClass = 'difficulty-easy';
+            if (question.difficulty === 'medium') difficultyClass = 'difficulty-medium';
+            if (question.difficulty === 'hard') difficultyClass = 'difficulty-hard';
+
+            let optionsHtml = '<div class="options">';
+            question.options.forEach((opt, idx) => {
+                const optionId = `${question.id}-opt-${idx}`;
+                const checked = quizAnswers[question.id] === idx ? 'checked' : '';
+                const selectedClass = quizAnswers[question.id] === idx ? 'selected' : '';
+                optionsHtml += `
+                    <label class="option ${selectedClass}">
+                        <input type="radio" name="${question.id}" value="${idx}" ${checked} onchange="selectAnswer('${question.id}', ${idx})">
+                        ${opt.text}
+                    </label>
+                `;
+            });
+            optionsHtml += '</div>';
+
+            questionDiv.innerHTML = `
+                <div class="question-header">
+                    <div class="question-number">Question ${qIndex + 1} of ${quizData.length}</div>
+                    <div class="question-progress">${qIndex + 1}/${quizData.length}</div>
+                </div>
+                <span class="difficulty-badge ${difficultyClass}">${question.difficulty.toUpperCase()}</span>
+                <h3 class="question-title">${question.question}</h3>
+                <div class="code-ref">From: ${question.codeRef}</div>
+                ${optionsHtml}
+            `;
+        }
+
+        // ===== UPDATE QUIZ NAV (Phase 2: State Updates Only) =====
+        function updateQuizNav() {
+            const navContainer = document.querySelector('.quiz-nav');
+            if (!navContainer) {
+                console.error('MISSING: .quiz-nav');
+                return;
+            }
+
+            let navHtml = '';
+
+            if (!quizSubmitted) {
+                navHtml += `<button class="nav-btn" onclick="prevQuestion()" ${currentQuestionIndex === 0 ? 'disabled' : ''}>← Previous</button>`;
+
+                if (currentQuestionIndex === quizData.length - 1) {
+                    navHtml += `<button class="submit-btn" onclick="submitQuiz()">Submit Quiz</button>`;
+                } else {
+                    navHtml += `<button class="nav-btn" onclick="nextQuestion()" ${currentQuestionIndex === quizData.length - 1 ? 'disabled' : ''}>Next →</button>`;
+                }
+            } else {
+                navHtml += `<button class="retry-btn" onclick="retryQuiz()">Retry Quiz</button>`;
+            }
+
+            navContainer.innerHTML = navHtml;
+        }
+
+        // ===== RENDER FLASHCARDS =====
+        function renderFlashcards() {
+            const grid = document.getElementById('flashcard-grid');
+            grid.innerHTML = '';
+            flashcards.forEach((card, idx) => {
+                const cardDiv = document.createElement('div');
+                cardDiv.className = 'flashcard';
+                cardDiv.tabindex = 0;
+                cardDiv.role = 'button';
+                cardDiv.innerHTML = `
+                    <div class="flashcard-inner">
+                        <div class="flashcard-front">
+                            <h3>${card.front}</h3>
+                            <div class="topic">${card.topic}</div>
+                            <div class="card-hint">Click to flip</div>
+                        </div>
+                        <div class="flashcard-back">
+                            <p>${card.back}</p>
+                        </div>
+                    </div>
+                `;
+                cardDiv.addEventListener('click', () => cardDiv.classList.toggle('is-flipped'));
+                cardDiv.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        cardDiv.classList.toggle('is-flipped');
+                    }
+                });
+                grid.appendChild(cardDiv);
+            });
+        }
+
+        // ===== QUIZ FUNCTIONS =====
+        function selectAnswer(questionId, optionIndex) {
+            quizAnswers[questionId] = optionIndex;
+            document.querySelectorAll(`[name="${questionId}"]`).forEach((radio, idx) => {
+                const label = radio.closest('.option');
+                if (label) {
+                    if (radio.checked) {
+                        label.classList.add('selected');
+                    } else {
+                        label.classList.remove('selected');
+                    }
+                }
+            });
+        }
+
+        function nextQuestion() {
+            if (currentQuestionIndex < quizData.length - 1) {
+                currentQuestionIndex++;
+                updateQuizContent(currentQuestionIndex);
+                updateQuizNav();
+            }
+        }
+
+        function prevQuestion() {
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                updateQuizContent(currentQuestionIndex);
+                updateQuizNav();
+            }
+        }
+
+        function submitQuiz() {
+            quizSubmitted = true;
+
+            const score = quizData.filter((q, idx) => {
+                const selected = quizAnswers[q.id];
+                return selected !== undefined && q.options[selected].correct;
+            }).length;
+
+            const percentage = Math.round((score / quizData.length) * 100);
+
+            let message = '';
+            if (percentage === 100) message = '🎉 Perfect Score!';
+            else if (percentage >= 80) message = '🌟 Excellent Work!';
+            else if (percentage >= 60) message = '✅ Good Effort!';
+            else if (percentage >= 40) message = '📚 Keep Studying!';
+            else message = '💪 Review and Retry!';
+
+            let resultsHtml = `
+                <div class="results-header">
+                    <h2>Quiz Complete!</h2>
+                    <div class="score-display">${score}/${quizData.length}</div>
+                    <div class="score-message">${percentage}% Correct</div>
+                    <p>${message}</p>
+                </div>
+
+                <div class="results-breakdown">
+                    <div class="breakdown-item">
+                        <div class="breakdown-label">Correct Answers</div>
+                        <div class="breakdown-value">${score}</div>
+                    </div>
+                    <div class="breakdown-item">
+                        <div class="breakdown-label">Incorrect Answers</div>
+                        <div class="breakdown-value">${quizData.length - score}</div>
+                    </div>
+                    <div class="breakdown-item">
+                        <div class="breakdown-label">Accuracy</div>
+                        <div class="breakdown-value">${percentage}%</div>
+                    </div>
+                </div>
+
+                <div class="results-detail">
+                    <h3 style="margin-bottom: 15px; color: var(--accent);">Answer Review:</h3>
+            `;
+
+            quizData.forEach((q, idx) => {
+                const selected = quizAnswers[q.id];
+                const isCorrect = selected !== undefined && q.options[selected].correct;
+                const userAnswerText = selected !== undefined ? q.options[selected].text : 'Not answered';
+                const correctAnswerText = q.options.find(o => o.correct)?.text || 'N/A';
+
+                resultsHtml += `
+                    <div class="result-item ${isCorrect ? 'correct' : 'incorrect'}">
+                        <div class="result-question">Q${idx + 1}: ${isCorrect ? '✓' : '✗'}</div>
+                        <div class="result-answer"><strong>Your answer:</strong> ${userAnswerText}</div>
+                        ${!isCorrect ? `<div class="result-answer"><strong>Correct answer:</strong> ${correctAnswerText}</div>` : ''}
+                        <div class="result-explanation"><strong>Explanation:</strong> ${q.explanation}</div>
+                    </div>
+                `;
+            });
+
+            resultsHtml += `</div>`;
+
+            document.getElementById('quiz-results').innerHTML = resultsHtml;
+            document.getElementById('quiz-results').style.display = 'block';
+            document.getElementById('quiz-content').style.display = 'none';
+            updateQuizNav();
+        }
+
+        function retryQuiz() {
+            currentQuestionIndex = 0;
+            quizAnswers = {};
+            quizSubmitted = false;
+            document.getElementById('quiz-results').style.display = 'none';
+            document.getElementById('quiz-results').innerHTML = '';
+            document.getElementById('quiz-content').style.display = 'block';
+            updateQuizContent(0);
+            updateQuizNav();
+        }
+
+        // ===== MODE SWITCHING =====
+        function switchMode(mode) {
+            currentMode = mode;
+            document.querySelectorAll('.mode-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+
+            document.querySelectorAll('.section').forEach(section => section.classList.remove('active'));
+
+            if (mode === 'flashcards') {
+                document.getElementById('study-summary').classList.add('active');
+                document.getElementById('mode-switcher').classList.add('active');
+                document.getElementById('flashcards').classList.add('active');
+            } else if (mode === 'quiz') {
+                document.getElementById('study-summary').classList.add('active');
+                document.getElementById('mode-switcher').classList.add('active');
+                document.getElementById('quiz').classList.add('active');
+            }
+        }
+
+        // ===== INITIALIZATION =====
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('Initializing study tool...');
+
+            // Validate DOM
+            validateDOM();
+
+            // Setup mode buttons
+            document.querySelectorAll('.mode-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    switchMode(e.target.dataset.mode);
+                });
+            });
+
+            // Initialize flashcards
+            renderFlashcards();
+
+            // Initialize quiz (Phase 1)
+            initializeQuizDOM();
+            updateQuizContent(0);
+            updateQuizNav();
+
+            console.log('✓ Study tool initialized successfully');
+            console.log(`  - ${flashcards.length} flashcards loaded`);
+            console.log(`  - ${quizData.length} quiz questions loaded`);
+        });
+    </script>
+</body>
+</html>
