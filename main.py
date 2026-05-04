@@ -62,21 +62,21 @@ class Square:
 
         self.x += self.dx * dt
         self.y += self.dy * dt
-        
-        #Bouncing walls
-        #if self.x < 0:
-         #   self.x = 0
-          #  self.dx *= -1
-        #elif self.x > WIDTH - self.size:
-         #   self.x = WIDTH - self.size
-         #   self.dx *= -1
 
-        #if self.y < 0:
-         #   self.y = 0
-          #  self.dy *= -1
-        #elif self.y > HEIGHT - self.size:
-         #   self.y = HEIGHT - self.size
-          #  self.dy *= -1
+        # Bouncing walls
+        # if self.x < 0:
+        #   self.x = 0
+        #  self.dx *= -1
+        # elif self.x > WIDTH - self.size:
+        #   self.x = WIDTH - self.size
+        #   self.dx *= -1
+
+        # if self.y < 0:
+        #   self.y = 0
+        #  self.dy *= -1
+        # elif self.y > HEIGHT - self.size:
+        #   self.y = HEIGHT - self.size
+        #  self.dy *= -1
 
         # wrap horizontally
         if self.x < 0:
@@ -89,6 +89,11 @@ class Square:
             self.y = HEIGHT
         elif self.y > HEIGHT:
             self.y = 0
+
+    def check_collision(self, other: "Square") -> bool:
+        rect1 = pygame.Rect(self.x, self.y, self.size, self.size)
+        rect2 = pygame.Rect(other.x, other.y, other.size, other.size)
+        return rect1.colliderect(rect2)
 
     def flee(self, all_squares: List["Square"], dt: float) -> None:
         for other in all_squares:
@@ -203,6 +208,7 @@ while running:
 
     for square in squares:
         square.move(dt)
+        square.check_collision(square)
         square.update_life(dt)
 
     for square in squares:
