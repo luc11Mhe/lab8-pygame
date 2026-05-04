@@ -126,6 +126,28 @@ class Square:
         if self.life <= 0:
             self.reset()
 
+    def reset(self) -> None:
+        # to keep the same size
+        size = getattr(self, "size", random.randint(MIN_SIZE, MAX_SIZE))
+        self.size = size
+
+        speed_fact = (MAX_SIZE - self.size) / (MAX_SIZE - MIN_SIZE + 1)
+        self.max_speed = max(1.0, MAX_SPEED * speed_fact)
+
+        self.x = float(random.randint(0, WIDTH - self.size))
+        self.y = float(random.randint(0, HEIGHT - self.size))
+
+        self.dx = random.choice([-1, 1]) * random.uniform(50, self.max_speed)
+        self.dy = random.choice([-1, 1]) * random.uniform(50, self.max_speed)
+
+        self.color = (
+            random.randint(50, 255),
+            random.randint(50, 255),
+            random.randint(50, 255),
+        )
+
+        self.life = random.uniform(5, 15)
+
     def draw(self, surface: pygame.Surface) -> None:
         pygame.draw.rect(surface, self.color, (self.x, self.y, self.size, self.size))
 
@@ -169,6 +191,7 @@ while running:
     for square in squares:
         square.move(dt)
         square.update_life(dt)
+        square.reset()
 
     for square in squares:
         square.draw(screen)
