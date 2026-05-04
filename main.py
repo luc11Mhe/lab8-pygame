@@ -7,7 +7,7 @@ pygame.init()
 
 MIN_SIZE: int = 10
 MAX_SIZE: int = 50
-MAX_SPEED: int = 200
+MAX_SPEED: int = 120
 
 WIDTH: int = 1080
 HEIGHT: int = 920
@@ -21,26 +21,6 @@ clock: pygame.time.Clock = pygame.time.Clock()
 class Square:
     def __init__(self) -> None:
         self.reset()
-
-    def reset(self) -> None:
-        self.size: int = random.randint(MIN_SIZE, MAX_SIZE)
-
-        speed_fact: float = (MAX_SIZE - self.size) / (MAX_SIZE - MIN_SIZE + 1)
-        self.max_speed: float = max(1.0, MAX_SPEED * speed_fact)
-
-        self.x: float = float(random.randint(0, WIDTH - self.size))
-        self.y: float = float(random.randint(0, HEIGHT - self.size))
-
-        self.dx: float = random.choice([-1, 1]) * random.uniform(50, self.max_speed)
-        self.dy: float = random.choice([-1, 1]) * random.uniform(50, self.max_speed)
-
-        self.color: Tuple[int, int, int] = (
-            random.randint(50, 255),
-            random.randint(50, 255),
-            random.randint(50, 255),
-        )
-
-        self.life: float = random.uniform(5, 15)
 
     def move(self, dt: float) -> None:
 
@@ -95,6 +75,14 @@ class Square:
         rect2 = pygame.Rect(other.x, other.y, other.size, other.size)
         return rect1.colliderect(rect2)
 
+    def eat(self, all_squares: List["Square"]) -> None:
+        for other in all_squares:
+            if other is self:
+                continue
+
+            if self.size > other.size and self.check_collision(other):
+                other.reset()
+
     def flee(self, all_squares: List["Square"], dt: float) -> None:
         for other in all_squares:
             if other is self:
@@ -144,30 +132,28 @@ class Square:
         if self.life <= 0:
             self.reset()
 
-    def reset(self) -> None:
-        # to keep the same size
-        size = getattr(self, "size", random.randint(MIN_SIZE, MAX_SIZE))
-        self.size = size
-
-        speed_fact = (MAX_SIZE - self.size) / (MAX_SIZE - MIN_SIZE + 1)
-        self.max_speed = max(1.0, MAX_SPEED * speed_fact)
-
-        self.x = float(random.randint(0, WIDTH - self.size))
-        self.y = float(random.randint(0, HEIGHT - self.size))
-
-        self.dx = random.choice([-1, 1]) * random.uniform(50, self.max_speed)
-        self.dy = random.choice([-1, 1]) * random.uniform(50, self.max_speed)
-
-        self.color = (
-            random.randint(50, 255),
-            random.randint(50, 255),
-            random.randint(50, 255),
-        )
-
-        self.life = random.uniform(5, 15)
-
     def draw(self, surface: pygame.Surface) -> None:
         pygame.draw.rect(surface, self.color, (self.x, self.y, self.size, self.size))
+
+    def reset(self) -> None:
+        self.size: int = random.randint(MIN_SIZE, MAX_SIZE)
+
+        speed_fact: float = (MAX_SIZE - self.size) / (MAX_SIZE - MIN_SIZE + 1)
+        self.max_speed: float = max(1.0, MAX_SPEED * speed_fact)
+
+        self.x: float = float(random.randint(0, WIDTH - self.size))
+        self.y: float = float(random.randint(0, HEIGHT - self.size))
+
+        self.dx: float = random.choice([-1, 1]) * random.uniform(50, self.max_speed)
+        self.dy: float = random.choice([-1, 1]) * random.uniform(50, self.max_speed)
+
+        self.color: Tuple[int, int, int] = (
+            random.randint(10, 255),
+            random.randint(10, 255),
+            random.randint(10, 255),
+        )
+
+        self.life: float = random.uniform(5, 15)
 
 
 squares: List[Square] = []
@@ -202,6 +188,7 @@ while running:
 
     for square in squares:
         square.flee(squares, dt)
+        square.eat(squares)
 
     for square in squares:
         square.chasing(squares, dt)
@@ -210,6 +197,7 @@ while running:
         square.move(dt)
         square.check_collision(square)
         square.update_life(dt)
+        square.reset()
 
     for square in squares:
         square.draw(screen)
