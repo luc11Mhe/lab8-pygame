@@ -198,7 +198,7 @@ for _ in range(10):
 # 30 squares with a size of 4
 for _ in range(30):
     s = Square()
-    s.size = 4
+    s.size = 4 
     squares.append(s)
 
 running: bool = True
