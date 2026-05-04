@@ -62,20 +62,33 @@ class Square:
 
         self.x += self.dx * dt
         self.y += self.dy * dt
+        
+        #Bouncing walls
+        #if self.x < 0:
+         #   self.x = 0
+          #  self.dx *= -1
+        #elif self.x > WIDTH - self.size:
+         #   self.x = WIDTH - self.size
+         #   self.dx *= -1
 
+        #if self.y < 0:
+         #   self.y = 0
+          #  self.dy *= -1
+        #elif self.y > HEIGHT - self.size:
+         #   self.y = HEIGHT - self.size
+          #  self.dy *= -1
+
+        # wrap horizontally
         if self.x < 0:
+            self.x = WIDTH
+        elif self.x > WIDTH:
             self.x = 0
-            self.dx *= -1
-        elif self.x > WIDTH - self.size:
-            self.x = WIDTH - self.size
-            self.dx *= -1
 
+        # wrap vertically
         if self.y < 0:
+            self.y = HEIGHT
+        elif self.y > HEIGHT:
             self.y = 0
-            self.dy *= -1
-        elif self.y > HEIGHT - self.size:
-            self.y = HEIGHT - self.size
-            self.dy *= -1
 
     def flee(self, all_squares: List["Square"], dt: float) -> None:
         for other in all_squares:
@@ -191,7 +204,6 @@ while running:
     for square in squares:
         square.move(dt)
         square.update_life(dt)
-        square.reset()
 
     for square in squares:
         square.draw(screen)
