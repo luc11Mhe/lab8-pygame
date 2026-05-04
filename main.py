@@ -7,7 +7,7 @@ pygame.init()
 
 MIN_SIZE: int = 10
 MAX_SIZE: int = 50
-MAX_SPEED: int = 120
+MAX_SPEED: int = 0
 
 WIDTH: int = 1080
 HEIGHT: int = 920
@@ -83,6 +83,16 @@ class Square:
             if self.size > other.size and self.check_collision(other):
                 other.reset()
 
+    def eat(self, all_squares: List["Square"]) -> None:
+        for other in all_squares:
+            if other is self:
+                continue
+
+            if self.size > other.size and self.check_collision(other):
+                self.size += other.size * 0.3
+                self.size = min(self.size, MAX_SIZE)  # limit growth
+                other.reset()
+
     def flee(self, all_squares: List["Square"], dt: float) -> None:
         for other in all_squares:
             if other is self:
@@ -132,28 +142,30 @@ class Square:
         if self.life <= 0:
             self.reset()
 
+    def reset(self) -> None:
+        # If size hasn't been set by the constructor, pick random
+        if not hasattr(self, "size"):
+            self.size = random.randint(MIN_SIZE, MAX_SIZE)
+
+        # Smaller squares are faster
+        speed_fact = (MAX_SIZE - self.size) / (MAX_SIZE - MIN_SIZE + 1)
+        self.max_speed = max(100.0, MAX_SPEED * speed_fact)
+
+        self.x = float(random.randint(0, WIDTH - int(self.size)))
+        self.y = float(random.randint(0, HEIGHT - int(self.size)))
+
+        self.dx = random.choice([-1, 1]) * random.uniform(50, self.max_speed)
+        self.dy = random.choice([-1, 1]) * random.uniform(50, self.max_speed)
+
+        self.color = (
+            random.randint(50, 255),
+            random.randint(50, 255),
+            random.randint(50, 255),
+        )
+        self.life = random.uniform(10, 20)
+
     def draw(self, surface: pygame.Surface) -> None:
         pygame.draw.rect(surface, self.color, (self.x, self.y, self.size, self.size))
-
-    def reset(self) -> None:
-        self.size: int = random.randint(MIN_SIZE, MAX_SIZE)
-
-        speed_fact: float = (MAX_SIZE - self.size) / (MAX_SIZE - MIN_SIZE + 1)
-        self.max_speed: float = max(1.0, MAX_SPEED * speed_fact)
-
-        self.x: float = float(random.randint(0, WIDTH - self.size))
-        self.y: float = float(random.randint(0, HEIGHT - self.size))
-
-        self.dx: float = random.choice([-1, 1]) * random.uniform(50, self.max_speed)
-        self.dy: float = random.choice([-1, 1]) * random.uniform(50, self.max_speed)
-
-        self.color: Tuple[int, int, int] = (
-            random.randint(10, 255),
-            random.randint(10, 255),
-            random.randint(10, 255),
-        )
-
-        self.life: float = random.uniform(5, 15)
 
 
 squares: List[Square] = []

@@ -9,7 +9,7 @@ For this to work i will not remove the bouncing mechanism will just put it in co
 ## Q4. Collision Detection Feature
 To detect collisions between two squares I considered two approaches:
 
-1. **Distance-based detection** (treat squares like circles)
+1. **Distance-based detection** 
 2. **Rectangle-based detection** using pygame.Rect
 
 Since my squares are already represented as rectangles (position + size), the most natural and reliable solution is to use **pygame.Rect**.
@@ -26,8 +26,10 @@ Instead of removing the square from the list I chose to call its `reset()` metho
 
 
 ## Q6. Eating++ Feature
+The goal is the same as in exercise 5 the difference is it needs to get bigger by proportion
 
 ## Q7. Trails Feature
+
 
 ## Q8. Testing Speed Feature
 
