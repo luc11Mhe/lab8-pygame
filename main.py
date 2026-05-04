@@ -130,7 +130,25 @@ class Square:
         pygame.draw.rect(surface, self.color, (self.x, self.y, self.size, self.size))
 
 
-squares: List[Square] = [Square() for _ in range(15)]
+squares: List[Square] = []
+
+# 5 squares with a size of 25
+for _ in range(5):
+    s = Square()
+    s.size = 25
+    squares.append(s)
+
+# 10 squares with a size of 10
+for _ in range(10):
+    s = Square()
+    s.size = 10
+    squares.append(s)
+
+# 30 squares with a size of 4
+for _ in range(30):
+    s = Square()
+    s.size = 4
+    squares.append(s)
 
 running: bool = True
 while running:
