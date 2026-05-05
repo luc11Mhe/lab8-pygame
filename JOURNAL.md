@@ -781,3 +781,42 @@
 - **Hook Version**: 1.02
 - **Date**: 05-05-2026 15:22
 - **Prompt**: Make a promt that does the math of my project
+
+### **New Interaction**
+- **Hook Version**: 1.02
+- **Date**: 05-05-2026 14:45
+- **Timestamp**: 2026-05-05T14:45:00Z
+- **Prompt**: Make a prompt that does the math of my project
+- **CoPilot Mode**: Copilot (Default)
+- **Socratic Mode**: ON (default)
+- **Changes Made**: Created Ultron.prompt.md for mathematical analysis and physics debugging
+- **Detailed Changes**:
+  - Created .github/prompts/Ultron.prompt.md (workspace-scoped prompt)
+  - 8 core mathematical concepts documented: position integration, velocity clamping, 2D rotation, distance calculations, AABB collision, steering forces, growth math, delta-time scaling
+  - Provided formulas for each concept with real code examples from the Moving Squares project
+  - Included 8+ reference calculations (speed, unit vectors, normalization, angle, rotation, etc.)
+  - Performance metrics table: O(n²) complexity, 4000+ calculations per frame, optimization opportunities
+  - Example request formats and trace-through debugging examples
+  - Teaching context to relate math to simulation behavior
+- **Output Artifacts**: 
+  - Ultron.prompt.md (comprehensive math & physics analysis prompt for project)
+  - Location: workspace-scoped (.github/prompts/)
+- **Capabilities**:
+  - Explain/verify vector math, rotation matrices, distance calculations
+  - Analyze collision detection (AABB algorithms)
+  - Break down AI steering force calculations (separation, evasion, pursuit)
+  - Debug mathematical bugs with step-by-step value traces
+  - Performance analysis and optimization suggestions
+  - Frame-rate independence verification (delta-time scaling)
+  - Growth rate calculations and safety limits
+- **Usage Examples**:
+  - \@Ultron verify steering force calculation: const strength = (200 - dist) / 200\
+  - \@Ultron explain why collision detection is O(1) instead of O(n²)\
+  - \@Ultron trace through position update with dt=0.014 seconds\
+  - \@Ultron analyze performance: why do we have 2,025 distance checks per frame?\
+- **Status**: Ultron prompt created and ready for mathematical analysis requests.
+
+### **New Interaction**
+- **Hook Version**: 1.02
+- **Date**: 05-05-2026 15:26
+- **Prompt**: make the html page for this agent
