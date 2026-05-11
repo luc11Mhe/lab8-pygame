@@ -7,7 +7,7 @@ pygame.init()
 
 MIN_SIZE: int = 10
 MAX_SIZE: int = 50
-MAX_SPEED: int = 0
+MAX_SPEED: int = 1
 
 WIDTH: int = 1080
 HEIGHT: int = 920
